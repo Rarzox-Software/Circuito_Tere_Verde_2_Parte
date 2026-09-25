@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="CircuitoTereVerdeWebApi/CircuitoTereVerdeWebApi.csproj" />
+  <Project Path="CircuitoTereVerde.Core/CircuitoTereVerde.Core.csproj" />
+  <Project Path="CircuitoTereVerde.Tests/CircuitoTereVerde.Tests.csproj" />
+</Solution>
