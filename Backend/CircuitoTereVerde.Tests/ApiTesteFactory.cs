@@ -1,8 +1,6 @@
 using CircuitoTereVerde.Core.Infra.Context;
-using CircuitoTereVerde.Core.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.DataProtection;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -15,8 +13,29 @@ namespace CircuitoTereVerde.Tests;
 // A API de teste usa o appsettings.Development e o banco SQLite fixo do projeto.
 public sealed class ApiTesteFactory : WebApplicationFactory<Program>
 {
-    public string EmailAdministrador { get; } = $"teste-{Guid.NewGuid():N}@circuito.local";
-    public string SenhaAdministrador { get; } = "TesteApi2026!";
+    public ApiTesteFactory()
+    {
+        // Usa HTTPS para que o cliente de teste envie o cookie Secure da API.
+        ClientOptions.BaseAddress = new Uri("https://localhost");
+    }
+
+    public string EmailAdministrador
+    {
+        get
+        {
+            return Services.GetRequiredService<IConfiguration>()["BootstrapAdmin:Email"]
+                ?? throw new InvalidOperationException("Configure o e-mail de teste no appsettings.Development.");
+        }
+    }
+
+    public string SenhaAdministrador
+    {
+        get
+        {
+            return Services.GetRequiredService<IConfiguration>()["BootstrapAdmin:Password"]
+                ?? throw new InvalidOperationException("Configure a senha de teste no appsettings.Development.");
+        }
+    }
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
@@ -45,15 +64,6 @@ public sealed class ApiTesteFactory : WebApplicationFactory<Program>
                 .PersistKeysToFileSystem(new DirectoryInfo(pastaChaves))
                 .SetApplicationName("CircuitoTereVerde.Tests");
         });
-        builder.ConfigureAppConfiguration((_, configuracao) =>
-        {
-            configuracao.AddInMemoryCollection(new Dictionary<string, string?>
-            {
-                ["BootstrapAdmin:Name"] = "Administrador de teste",
-                ["BootstrapAdmin:Email"] = EmailAdministrador,
-                ["BootstrapAdmin:Password"] = SenhaAdministrador
-            });
-        });
     }
 }
 
@@ -67,6 +77,7 @@ public sealed class ApiTesteFixture : IAsyncLifetime
 
     public async Task InitializeAsync()
     {
+        // Iniciar a API executa o DatabaseInitializer, que cria a base se ela ainda não existir.
         using var cliente = Factory.CreateClient();
         _apiIniciada = true;
         using var resposta = await cliente.GetAsync("/api/parques");
@@ -84,6 +95,7 @@ public sealed class ApiTesteFixture : IAsyncLifetime
 
     public async Task DisposeAsync()
     {
+        // Mantém o banco e o administrador; limpa apenas as postagens e fotos criadas pelos testes.
         if (_apiIniciada)
         {
             await using var escopo = Factory.Services.CreateAsyncScope();
@@ -94,21 +106,11 @@ public sealed class ApiTesteFixture : IAsyncLifetime
                 if (postagem is not null)
                 {
                     contexto.Postagens.Remove(postagem);
+                    contexto.FotosPostagem.Remove(postagem.FotoPostagem);
                 }
             }
 
             await contexto.SaveChangesAsync();
-
-            var gerenciadorUsuarios = escopo.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-            var administrador = await gerenciadorUsuarios.FindByEmailAsync(Factory.EmailAdministrador);
-            if (administrador is not null)
-            {
-                var resultado = await gerenciadorUsuarios.DeleteAsync(administrador);
-                if (!resultado.Succeeded)
-                {
-                    throw new InvalidOperationException("Não foi possível remover o administrador criado pelo teste.");
-                }
-            }
         }
 
         Factory.Dispose();

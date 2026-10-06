@@ -22,16 +22,18 @@ public sealed class AdminPostagensController : ControllerBase
 
     [HttpGet]
     public async Task<IActionResult> Listar(
-        [FromQuery] int pagina = 1,
-        [FromQuery] int tamanhoPagina = 12,
+        [FromHeader] int pagina = 1,
+        [FromHeader] int tamanhoPagina = 12,
         CancellationToken cancellationToken = default)
     {
         var resultado = await _adminPostagensService.ListarAsync(pagina, tamanhoPagina, cancellationToken);
         return Ok(resultado);
     }
 
-    [HttpGet("{id:int}")]
-    public async Task<IActionResult> Obter(int id, CancellationToken cancellationToken)
+    [HttpGet("selecionada")]
+    public async Task<IActionResult> Obter(
+        [FromHeader] int id,
+        CancellationToken cancellationToken)
     {
         var postagem = await _adminPostagensService.ObterAsync(id, cancellationToken);
         return Ok(postagem);
@@ -42,34 +44,35 @@ public sealed class AdminPostagensController : ControllerBase
     #region Cadastro e edição
 
     [HttpPost]
-    [ValidateAntiForgeryToken]
+    [Consumes("multipart/form-data")]
     [RequestSizeLimit(5_300_000)]
     public async Task<IActionResult> Criar(
         [FromForm] SalvarPostagemDto dados,
-        [FromForm(Name = "foto")] IFormFile? arquivoFoto,
+        IFormFile? foto,
         CancellationToken cancellationToken)
     {
         var usuarioId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty;
-        var postagem = await _adminPostagensService.CriarAsync(dados, arquivoFoto, usuarioId, cancellationToken);
-        return CreatedAtAction(nameof(Obter), new { id = postagem.Id }, postagem);
+        var postagem = await _adminPostagensService.CriarAsync(dados, foto, usuarioId, cancellationToken);
+        return StatusCode(StatusCodes.Status201Created, postagem);
     }
 
-    [HttpPut("{id:int}")]
-    [ValidateAntiForgeryToken]
+    [HttpPut]
+    [Consumes("multipart/form-data")]
     [RequestSizeLimit(5_300_000)]
     public async Task<IActionResult> Atualizar(
-        int id,
+        [FromHeader] int id,
         [FromForm] SalvarPostagemDto dados,
-        [FromForm(Name = "foto")] IFormFile? arquivoFoto,
+        IFormFile? foto,
         CancellationToken cancellationToken)
     {
-        var postagem = await _adminPostagensService.AtualizarAsync(id, dados, arquivoFoto, cancellationToken);
+        var postagem = await _adminPostagensService.AtualizarAsync(id, dados, foto, cancellationToken);
         return Ok(postagem);
     }
 
-    [HttpDelete("{id:int}")]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Excluir(int id, CancellationToken cancellationToken)
+    [HttpDelete]
+    public async Task<IActionResult> Excluir(
+        [FromHeader] int id,
+        CancellationToken cancellationToken)
     {
         await _adminPostagensService.ExcluirAsync(id, cancellationToken);
         return NoContent();

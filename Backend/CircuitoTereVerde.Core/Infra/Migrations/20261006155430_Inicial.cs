@@ -13,6 +13,7 @@ namespace CircuitoTereVerde.Core.Infra.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            // AspNetRoles: guarda os perfis de acesso, como USUARIO e ADMINISTRADOR.
             migrationBuilder.CreateTable(
                 name: "AspNetRoles",
                 columns: table => new
@@ -27,6 +28,7 @@ namespace CircuitoTereVerde.Core.Infra.Migrations
                     table.PrimaryKey("PK_AspNetRoles", x => x.Id);
                 });
 
+            // AspNetUsers: guarda as contas, a senha protegida por hash e o controle de tentativas e bloqueio do login.
             migrationBuilder.CreateTable(
                 name: "AspNetUsers",
                 columns: table => new
@@ -51,6 +53,20 @@ namespace CircuitoTereVerde.Core.Infra.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "FotosPostagem",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Conteudo = table.Column<byte[]>(type: "BLOB", nullable: false),
+                    TipoConteudo = table.Column<string>(type: "TEXT", maxLength: 80, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FotosPostagem", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -81,6 +97,7 @@ namespace CircuitoTereVerde.Core.Infra.Migrations
                     table.PrimaryKey("PK_TiposPostagem", x => x.Id);
                 });
 
+            // AspNetRoleClaims: guarda permissões e informações adicionais de um perfil; não é usada no MVP.
             migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
                 columns: table => new
@@ -102,6 +119,7 @@ namespace CircuitoTereVerde.Core.Infra.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            // AspNetUserClaims: guarda permissões e informações adicionais de uma conta; não é usada no MVP.
             migrationBuilder.CreateTable(
                 name: "AspNetUserClaims",
                 columns: table => new
@@ -123,6 +141,7 @@ namespace CircuitoTereVerde.Core.Infra.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            // AspNetUserLogins: vincula contas a logins externos, como Google; não é usada no MVP.
             migrationBuilder.CreateTable(
                 name: "AspNetUserLogins",
                 columns: table => new
@@ -143,6 +162,7 @@ namespace CircuitoTereVerde.Core.Infra.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            // AspNetUserRoles: relaciona cada conta aos seus perfis para permitir o acesso administrativo.
             migrationBuilder.CreateTable(
                 name: "AspNetUserRoles",
                 columns: table => new
@@ -167,6 +187,7 @@ namespace CircuitoTereVerde.Core.Infra.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            // AspNetUserTokens: guarda tokens de recursos do Identity, como autenticação em duas etapas; não guarda o cookie de sessão.
             migrationBuilder.CreateTable(
                 name: "AspNetUserTokens",
                 columns: table => new
@@ -195,6 +216,7 @@ namespace CircuitoTereVerde.Core.Infra.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     ParqueId = table.Column<int>(type: "INTEGER", nullable: false),
                     TipoPostagemId = table.Column<int>(type: "INTEGER", nullable: false),
+                    FotoPostagemId = table.Column<int>(type: "INTEGER", nullable: false),
                     Titulo = table.Column<string>(type: "TEXT", maxLength: 160, nullable: false),
                     Descricao = table.Column<string>(type: "TEXT", maxLength: 5000, nullable: false),
                     DataPublicacao = table.Column<DateTimeOffset>(type: "TEXT", nullable: false),
@@ -208,6 +230,12 @@ namespace CircuitoTereVerde.Core.Infra.Migrations
                 {
                     table.PrimaryKey("PK_Postagens", x => x.Id);
                     table.ForeignKey(
+                        name: "FK_Postagens_FotosPostagem_FotoPostagemId",
+                        column: x => x.FotoPostagemId,
+                        principalTable: "FotosPostagem",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
                         name: "FK_Postagens_Parques_ParqueId",
                         column: x => x.ParqueId,
                         principalTable: "Parques",
@@ -219,25 +247,6 @@ namespace CircuitoTereVerde.Core.Infra.Migrations
                         principalTable: "TiposPostagem",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "FotosPostagem",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false),
-                    Conteudo = table.Column<byte[]>(type: "BLOB", nullable: false),
-                    TipoConteudo = table.Column<string>(type: "TEXT", maxLength: 80, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_FotosPostagem", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_FotosPostagem_Postagens_Id",
-                        column: x => x.Id,
-                        principalTable: "Postagens",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.InsertData(
@@ -308,6 +317,12 @@ namespace CircuitoTereVerde.Core.Infra.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_Postagens_FotoPostagemId",
+                table: "Postagens",
+                column: "FotoPostagemId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Postagens_ParqueId_TipoPostagemId_DataInicio_DataFim",
                 table: "Postagens",
                 columns: new[] { "ParqueId", "TipoPostagemId", "DataInicio", "DataFim" });
@@ -343,7 +358,7 @@ namespace CircuitoTereVerde.Core.Infra.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "FotosPostagem");
+                name: "Postagens");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
@@ -352,7 +367,7 @@ namespace CircuitoTereVerde.Core.Infra.Migrations
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
-                name: "Postagens");
+                name: "FotosPostagem");
 
             migrationBuilder.DropTable(
                 name: "Parques");
@@ -362,4 +377,3 @@ namespace CircuitoTereVerde.Core.Infra.Migrations
         }
     }
 }
-

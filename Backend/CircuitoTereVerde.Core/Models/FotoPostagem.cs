@@ -7,7 +7,7 @@ namespace CircuitoTereVerde.Core.Models;
 public sealed class FotoPostagem : IEntity
 {
     [Key]
-    [ForeignKey(nameof(Postagem))]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public override int Id { get; set; }
 
     [Required]
@@ -16,6 +16,4 @@ public sealed class FotoPostagem : IEntity
     [Required]
     [MaxLength(80)]
     public string TipoConteudo { get; set; } = string.Empty;
-
-    public Postagem Postagem { get; set; } = null!;
 }

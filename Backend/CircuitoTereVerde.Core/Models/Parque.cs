@@ -9,6 +9,7 @@ namespace CircuitoTereVerde.Core.Models;
 public sealed class Parque : IEntity
 {
     [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public override int Id { get; set; }
 
     [Required]

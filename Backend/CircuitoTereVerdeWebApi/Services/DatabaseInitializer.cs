@@ -28,6 +28,7 @@ public sealed class DatabaseInitializer
 
     public async Task InitializeAsync(CancellationToken cancellationToken = default)
     {
+        // Cria a base com a Inicial ou aplica apenas as migrações que ainda não foram executadas.
         await _context.Database.MigrateAsync(cancellationToken);
 
         foreach (var nomePerfil in new[] { "USUARIO", "ADMINISTRADOR" })
@@ -42,6 +43,7 @@ public sealed class DatabaseInitializer
             }
         }
 
+        // O Identity cria o administrador com a senha do appsettings depois de preparar as tabelas.
         await CriarAdministradorInicialAsync();
     }
 

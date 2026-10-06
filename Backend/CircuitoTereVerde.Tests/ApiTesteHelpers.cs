@@ -1,24 +1,23 @@
 using System.Net.Http.Json;
-using System.Text.Json;
+using System.Net.Http.Headers;
+using System.Globalization;
 
 namespace CircuitoTereVerde.Tests;
 
-// Centraliza as chamadas de autenticação e o token CSRF usados pelos testes de rota.
+// Centraliza os cabeçalhos e chamadas de autenticação usados pelos testes de rota.
 internal static class ApiTesteHelpers
 {
+    public const string CabecalhoIdPostagem = "id";
+
+    #region Login e cabeçalhos
+
     public static async Task EntrarComoAdministradorAsync(HttpClient cliente, ApiTesteFactory factory)
     {
-        var token = await ObterTokenCsrfAsync(cliente);
-        using var requisicao = new HttpRequestMessage(HttpMethod.Post, "/api/auth/login")
+        using var resposta = await cliente.PostAsJsonAsync("/api/auth/login", new
         {
-            Content = JsonContent.Create(new
-            {
-                email = factory.EmailAdministrador,
-                senha = factory.SenhaAdministrador
-            })
-        };
-        requisicao.Headers.Add("X-XSRF-TOKEN", token);
-        using var resposta = await cliente.SendAsync(requisicao);
+            email = factory.EmailAdministrador,
+            senha = factory.SenhaAdministrador
+        });
         if (!resposta.IsSuccessStatusCode)
         {
             var detalhe = await resposta.Content.ReadAsStringAsync();
@@ -26,30 +25,71 @@ internal static class ApiTesteHelpers
         }
     }
 
-    public static async Task<HttpResponseMessage> EnviarComCsrfAsync(
-        HttpClient cliente,
+    public static HttpRequestMessage CriarRequisicaoComId(
         HttpMethod metodo,
         string caminho,
+        int id,
         HttpContent? conteudo = null)
     {
-        var token = await ObterTokenCsrfAsync(cliente);
-        using var requisicao = new HttpRequestMessage(metodo, caminho)
+        var requisicao = new HttpRequestMessage(metodo, caminho)
         {
             Content = conteudo
         };
-        requisicao.Headers.Add("X-XSRF-TOKEN", token);
+        requisicao.Headers.Add(CabecalhoIdPostagem, id.ToString());
+        return requisicao;
+    }
+
+    public static async Task<HttpResponseMessage> EnviarComIdAsync(
+        HttpClient cliente,
+        HttpMethod metodo,
+        string caminho,
+        int id,
+        HttpContent? conteudo = null)
+    {
+        using var requisicao = CriarRequisicaoComId(metodo, caminho, id, conteudo);
         return await cliente.SendAsync(requisicao);
     }
 
-    private static async Task<string> ObterTokenCsrfAsync(HttpClient cliente)
+    #endregion
+
+    #region Formulário enviado pelo frontend
+
+    // Monta os mesmos campos multipart que o frontend envia ao gravar uma postagem.
+    public static MultipartFormDataContent CriarFormularioPostagem(
+        string titulo,
+        string descricao,
+        DateOnly? dataInicio,
+        DateOnly? dataFim,
+        byte[]? foto,
+        string parque = "PNSO",
+        string tipo = "EVENTOS",
+        string tipoFoto = "image/png")
     {
-        using var resposta = await cliente.GetAsync("/api/auth/csrf");
-        if (!resposta.IsSuccessStatusCode)
+        var formulario = new MultipartFormDataContent();
+        formulario.Add(new StringContent(parque), "Parque");
+        formulario.Add(new StringContent(tipo), "Tipo");
+        formulario.Add(new StringContent(titulo), "Titulo");
+        formulario.Add(new StringContent(descricao), "Descricao");
+
+        if (dataInicio.HasValue)
         {
-            var detalhe = await resposta.Content.ReadAsStringAsync();
-            throw new InvalidOperationException($"A API de teste respondeu {(int)resposta.StatusCode}: {detalhe}");
+            formulario.Add(new StringContent(dataInicio.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)), "DataInicio");
         }
-        using var documento = JsonDocument.Parse(await resposta.Content.ReadAsStringAsync());
-        return documento.RootElement.GetProperty("token").GetString()!;
+
+        if (dataFim.HasValue)
+        {
+            formulario.Add(new StringContent(dataFim.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)), "DataFim");
+        }
+
+        if (foto is not null)
+        {
+            var conteudoFoto = new ByteArrayContent(foto);
+            conteudoFoto.Headers.ContentType = new MediaTypeHeaderValue(tipoFoto);
+            formulario.Add(conteudoFoto, "foto", "foto.png");
+        }
+
+        return formulario;
     }
+
+    #endregion
 }

@@ -1,7 +1,6 @@
 using CircuitoTereVerde.Core.Domain;
 using CircuitoTereVerdeWebApi.Services;
 using CircuitoTereVerdeWebApi.Dependencies;
-using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Cada parte da aplicação registra suas dependências na pasta Dependencies.
 builder.Services.AddConexao(builder.Configuration, builder.Environment);
-builder.Services.AddAutenticacao(builder.Configuration, builder.Environment);
+builder.Services.AddAutenticacao();
 builder.Services.AddCorsFrontend(builder.Configuration);
 builder.Services.AddServicos();
 
@@ -23,7 +22,6 @@ app.UseExceptionHandler(errorApp => errorApp.Run(async context =>
     {
         RegistroNaoEncontradoException => StatusCodes.Status404NotFound,
         ErroDominioException => StatusCodes.Status400BadRequest,
-        AntiforgeryValidationException => StatusCodes.Status400BadRequest,
         _ => StatusCodes.Status500InternalServerError
     };
     var problem = new ProblemDetails
@@ -51,7 +49,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
-// Aplica as migrações, prepara os perfis e cria o administrador configurado.
+// Em cada início, aplica as migrações pendentes, prepara os perfis e cria o administrador configurado.
 await using (var scope = app.Services.CreateAsyncScope())
 {
     var inicializador = scope.ServiceProvider.GetRequiredService<DatabaseInitializer>();

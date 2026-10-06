@@ -83,31 +83,6 @@ public sealed class PostagemService
         return Mapear(postagem);
     }
 
-    public async Task<FotoPostagemDto> ObterFotoAsync(
-        int id,
-        bool administrador,
-        CancellationToken cancellationToken = default)
-    {
-        if (!administrador)
-        {
-            var hoje = DateOnly.FromDateTime(DateTime.UtcNow);
-            var repositorioPostagem = _uow.PostagemRepository;
-            var visivel = await repositorioPostagem.PrimeiroOuPadraoAsync(
-                repositorioPostagem.Consultar()
-                    .Where(item => item.Id == id
-                        && item.DataInicio <= hoje
-                        && (item.DataFim == null || item.DataFim >= hoje)),
-                cancellationToken);
-
-            if (visivel is null)
-            {
-                throw new RegistroNaoEncontradoException("Imagem não encontrada.");
-            }
-        }
-
-        return await ObterFotoAsync(id, cancellationToken);
-    }
-
     #endregion
 
     #region Consultas e operações administrativas
@@ -206,7 +181,8 @@ public sealed class PostagemService
         {
             var repositorioFoto = _uow.FotoPostagemRepository;
             var fotoAtual = await repositorioFoto.PrimeiroOuPadraoAsync(
-                repositorioFoto.Consultar(rastrearAlteracoes: true).Where(item => item.Id == id), cancellationToken);
+                repositorioFoto.Consultar(rastrearAlteracoes: true)
+                    .Where(item => item.Id == postagem.FotoPostagemId), cancellationToken);
 
             if (fotoAtual is null)
             {
@@ -235,21 +211,9 @@ public sealed class PostagemService
         }
 
         repositorio.Excluir(postagem);
+        // Remove a foto vinculada no mesmo salvamento da exclusão da postagem.
+        _uow.FotoPostagemRepository.Excluir(postagem.FotoPostagem);
         await _uow.SalvarAlteracoesAsync(cancellationToken);
-    }
-
-    public async Task<FotoPostagemDto> ObterFotoAsync(int id, CancellationToken cancellationToken = default)
-    {
-        var repositorio = _uow.FotoPostagemRepository;
-        var foto = await repositorio.PrimeiroOuPadraoAsync(
-            repositorio.Consultar().Where(item => item.Id == id), cancellationToken);
-
-        if (foto is null)
-        {
-            throw new RegistroNaoEncontradoException("Imagem não encontrada.");
-        }
-
-        return new FotoPostagemDto(foto.Conteudo, foto.TipoConteudo);
     }
 
     #endregion
@@ -307,7 +271,9 @@ public sealed class PostagemService
             postagem.TipoPostagem.Codigo,
             postagem.Titulo,
             postagem.Descricao,
-            $"/api/postagens/{postagem.Id}/foto",
+            postagem.FotoPostagem is null
+                ? string.Empty
+                : $"data:{postagem.FotoPostagem.TipoConteudo};base64,{Convert.ToBase64String(postagem.FotoPostagem.Conteudo)}",
             postagem.DataPublicacao,
             postagem.DataInicio,
             postagem.DataFim,

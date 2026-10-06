@@ -9,8 +9,7 @@ public static class ServicosDependencies
 {
     public static IServiceCollection AddServicos(this IServiceCollection services)
     {
-        services.AddControllersWithViews();
-        services.AddOpenApi();
+        services.AddControllers();
         services.AddSwaggerGen();
         services.AddScoped<UnitOfWork>(provider =>
         {

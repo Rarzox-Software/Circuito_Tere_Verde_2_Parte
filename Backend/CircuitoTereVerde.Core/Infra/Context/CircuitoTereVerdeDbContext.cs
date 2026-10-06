@@ -28,6 +28,11 @@ public sealed class CircuitoTereVerdeDbContext : IdentityDbContext<ApplicationUs
         get { return Set<Postagem>(); }
     }
 
+    public DbSet<FotoPostagem> FotosPostagem
+    {
+        get { return Set<FotoPostagem>(); }
+    }
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
@@ -48,6 +53,7 @@ public sealed class CircuitoTereVerdeDbContext : IdentityDbContext<ApplicationUs
 
         builder.Entity<Postagem>().Navigation(item => item.Parque).AutoInclude();
         builder.Entity<Postagem>().Navigation(item => item.TipoPostagem).AutoInclude();
+        builder.Entity<Postagem>().Navigation(item => item.FotoPostagem).AutoInclude();
         builder.Entity<Postagem>()
             .HasOne(item => item.Parque)
             .WithMany()
@@ -60,8 +66,8 @@ public sealed class CircuitoTereVerdeDbContext : IdentityDbContext<ApplicationUs
             .OnDelete(DeleteBehavior.Restrict);
         builder.Entity<Postagem>()
             .HasOne(item => item.FotoPostagem)
-            .WithOne(item => item.Postagem)
-            .HasForeignKey<FotoPostagem>(item => item.Id)
-            .OnDelete(DeleteBehavior.Cascade);
+            .WithOne()
+            .HasForeignKey<Postagem>(item => item.FotoPostagemId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

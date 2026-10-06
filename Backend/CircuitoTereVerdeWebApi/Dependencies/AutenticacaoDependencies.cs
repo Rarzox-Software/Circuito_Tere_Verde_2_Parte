@@ -6,18 +6,8 @@ namespace CircuitoTereVerdeWebApi.Dependencies;
 
 public static class AutenticacaoDependencies
 {
-    public static IServiceCollection AddAutenticacao(
-        this IServiceCollection services,
-        IConfiguration configuration,
-        IWebHostEnvironment environment)
+    public static IServiceCollection AddAutenticacao(this IServiceCollection services)
     {
-        var sameSite = Enum.TryParse<SameSiteMode>(configuration["Cookie:SameSite"], true, out var configurado)
-            ? configurado
-            : SameSiteMode.Lax;
-        var securePolicy = environment.IsDevelopment()
-            ? CookieSecurePolicy.SameAsRequest
-            : CookieSecurePolicy.Always;
-
         services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {
                 options.User.RequireUniqueEmail = true;
@@ -37,8 +27,9 @@ public static class AutenticacaoDependencies
         {
             options.Cookie.Name = "CircuitoTereVerde.Auth";
             options.Cookie.HttpOnly = true;
-            options.Cookie.SecurePolicy = securePolicy;
-            options.Cookie.SameSite = sameSite;
+            options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+            options.Cookie.SameSite = SameSiteMode.Strict;
+            options.Cookie.Path = "/";
             options.ExpireTimeSpan = TimeSpan.FromHours(8);
             options.SlidingExpiration = true;
             options.Events.OnRedirectToLogin = context =>
@@ -53,14 +44,6 @@ public static class AutenticacaoDependencies
             };
         });
 
-        services.AddAntiforgery(options =>
-        {
-            options.HeaderName = "X-XSRF-TOKEN";
-            options.Cookie.Name = "CircuitoTereVerde.Xsrf";
-            options.Cookie.HttpOnly = true;
-            options.Cookie.SecurePolicy = securePolicy;
-            options.Cookie.SameSite = sameSite;
-        });
         services.AddAuthorization();
 
         return services;

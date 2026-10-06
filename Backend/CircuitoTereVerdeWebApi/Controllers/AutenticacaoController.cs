@@ -1,7 +1,6 @@
 using System.Security.Claims;
 using CircuitoTereVerde.Core.Contracts;
 using CircuitoTereVerdeWebApi.Services;
-using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,29 +11,16 @@ namespace CircuitoTereVerdeWebApi.Controllers;
 public sealed class AutenticacaoController : ControllerBase
 {
     private readonly IdentityAutenticacaoService _autenticacaoService;
-    private readonly IAntiforgery _antiforgery;
 
-    public AutenticacaoController(
-        IdentityAutenticacaoService autenticacaoService,
-        IAntiforgery antiforgery)
+    public AutenticacaoController(IdentityAutenticacaoService autenticacaoService)
     {
         _autenticacaoService = autenticacaoService;
-        _antiforgery = antiforgery;
     }
 
-    #region Sessão e proteção CSRF
-
-    [HttpGet("csrf")]
-    [AllowAnonymous]
-    public IActionResult ObterTokenCsrf()
-    {
-        var tokens = _antiforgery.GetAndStoreTokens(HttpContext);
-        return Ok(new { token = tokens.RequestToken });
-    }
+    #region Sessão
 
     [HttpPost("login")]
     [AllowAnonymous]
-    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Entrar([FromBody] LoginDto dados)
     {
         var usuario = await _autenticacaoService.EntrarAsync(dados);
@@ -62,7 +48,6 @@ public sealed class AutenticacaoController : ControllerBase
 
     [HttpPost("logout")]
     [Authorize]
-    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Sair()
     {
         await _autenticacaoService.SairAsync();
