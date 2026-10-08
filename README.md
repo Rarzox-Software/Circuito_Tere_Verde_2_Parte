@@ -1,4 +1,4 @@
-<img width="150" height="150" alt="Logo Circuito TereVerde" src="./prototipo/Logo Circuito TereVerde.png" />
+<img width="150" height="150" alt="Logo Circuito TereVerde" src="./Frontend/prototipo/Logo Circuito TereVerde.png" />
 
 # Grupo 2
 Rafael Mendes, Igor Augusto, Nauan Pereira, Ingrid Mendes
@@ -54,10 +54,10 @@ Para entender melhor a interface do sistema, fizemos algumas prototipagens. Abai
 Foi utilizado o Figma para realizar os protótipos:
 
 🔗 [Link do Protótipo no Figma](https://www.figma.com/design/8h9bIUN2wJT7pQEnlBlgL0/Circuito-Tere-Verde?node-id=0-1&t=ZuovEVVD7DJLBvDC-1)
-![Prototipagem 1](./prototipo/Principal.png)
-![Prototipagem 2](./prototipo/Login.png)
-![Prototipagem 3](./prototipo/Painel.png)
-![Prototipagem 4](./prototipo/Registro.png)
+![Prototipagem 1](./Frontend/prototipo/Principal.png)
+![Prototipagem 2](./Frontend/prototipo/Login.png)
+![Prototipagem 3](./Frontend/prototipo/Painel.png)
+![Prototipagem 4](./Frontend/prototipo/prototipo/Registro.png)
 
 ## Lista de Requisitos
 
