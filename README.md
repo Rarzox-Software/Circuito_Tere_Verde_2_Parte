@@ -57,7 +57,7 @@ Foi utilizado o Figma para realizar os protótipos:
 ![Prototipagem 1](./Frontend/prototipo/Principal.png)
 ![Prototipagem 2](./Frontend/prototipo/Login.png)
 ![Prototipagem 3](./Frontend/prototipo/Painel.png)
-![Prototipagem 4](./Frontend/prototipo/prototipo/Registro.png)
+![Prototipagem 4](./Frontend/prototipo/Registro.png)
 
 ## Lista de Requisitos
 
