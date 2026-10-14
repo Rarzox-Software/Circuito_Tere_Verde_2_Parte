@@ -1,7 +1,10 @@
 <img width="150" height="150" alt="Logo Circuito TereVerde" src="./Frontend/prototipo/Logo Circuito TereVerde.png" />
 
 # Grupo 2
-Rafael Mendes, Igor Augusto, Nauan Pereira, Ingrid Mendes
+**Rafael Mendes,**
+**Igor Augusto,** 
+**Nauan Pereira,** 
+**Ingrid Mendes**
 
 # Situação Problema: 
 Dificuldade em acessar informações sobre o Parque Nacional da Serra dos Órgãos, o Parque Estadual dos Três Picos e o Parque Natural Municipal Montanhas de Teresópolis, como informações sobre suas trilhas, cachoeiras e biodiversidade.
