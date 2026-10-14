@@ -1,7 +1,10 @@
 <img width="150" height="150" alt="Logo Circuito TereVerde" src="./Frontend/prototipo/Logo Circuito TereVerde.png" />
 
 # Grupo 2
-Rafael Mendes, Igor Augusto, Nauan Pereira, Ingrid Mendes
+**Rafael Mendes,**
+**Igor Augusto,** 
+**Nauan Pereira,** 
+**Ingrid Mendes**
 
 # Situação Problema: 
 Dificuldade em acessar informações sobre o Parque Nacional da Serra dos Órgãos, o Parque Estadual dos Três Picos e o Parque Natural Municipal Montanhas de Teresópolis, como informações sobre suas trilhas, cachoeiras e biodiversidade.
@@ -49,7 +52,6 @@ O MVP do Circuito Terê Verde consiste em uma plataforma digital mínima e funci
 
 
 ## Protótipos
-
 Para entender melhor a interface do sistema, fizemos algumas prototipagens. Abaixo estão as imagens das prototipagens em JPEG/PNG.
 Foi utilizado o Figma para realizar os protótipos:
 
@@ -108,4 +110,6 @@ Você pode visualizar os slides de apresentação do MVP no link abaixo:
 - Integração com um banco de dados para salvar usuários e agendamentos.
 - Possibilidade de Cadastrar mais parques e atrações.
 - Feedback visual mais interativo para validações.
+- Agendamento para Camping.
+dações.
 - Agendamento para Camping.
