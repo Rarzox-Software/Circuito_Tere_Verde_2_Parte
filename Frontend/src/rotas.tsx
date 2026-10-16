@@ -1,8 +1,8 @@
-import { Routes, Route } from 'react-router-dom';
-import Principal from './paginas/principal';
-import Sobre from './paginas/sobre';
-import Login from './paginas/login';
-import PainelControle from './paginas/painel-controle/painelControle';
+import { Routes, Route } from "react-router-dom";
+import Principal from "./paginas/principal";
+import Sobre from "./paginas/sobre";
+import Login from "./paginas/login/login";
+import PainelControle from "./paginas/painel-controle/painelControle";
 
 export default function Rotas() {
   return (

@@ -1,11 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { MockStore } from "../dados/MockStore.ts";
+import { useLogin } from "@/api/useLogin";
 
 export default function Login() {
-
-  // dados mockado teste
-  const store = MockStore.getInstance();
+  const createLoginMutation = useLogin();
 
   // router
   const navigate = useNavigate();
@@ -16,9 +14,15 @@ export default function Login() {
   const [erro, setErro] = useState("");
 
   // funcoes
-  function fazerLogin(e) {
+  async function fazerLogin(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const resultado = store.login(login, senha);
+
+    const resultado = await createLoginMutation.mutateAsync({
+      email: login,
+      senha,
+    });
+
+    console.log(resultado);
 
     if (!resultado) {
       setErro("Email ou senha inválidos.");
@@ -32,15 +36,13 @@ export default function Login() {
   }
 
   return (
- <div className="w-screen h-screen flex items-center justify-center bg-[#e7e5d8]">
+    <div className="w-screen h-screen flex items-center justify-center bg-[#e7e5d8]">
       <div className="bg-white/60 backdrop-blur-md shadow-xl p-10 rounded-xl w-80 border border-white/40">
-        
         <h2 className="text-center text-xl font-semibold text-gray-700 mb-6">
           Login
         </h2>
 
         <form onSubmit={fazerLogin} className="flex flex-col gap-4">
-
           <div className="flex flex-col text-sm text-gray-600">
             <label>Email</label>
             <input
@@ -79,7 +81,6 @@ export default function Login() {
           >
             ENTRAR
           </button>
-
         </form>
 
         <p className="text-center text-xs text-green-900/60 mt-4 cursor-pointer">
@@ -87,5 +88,5 @@ export default function Login() {
         </p>
       </div>
     </div>
-  )
+  );
 }

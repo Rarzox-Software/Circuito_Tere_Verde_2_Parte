@@ -44,15 +44,11 @@ public sealed class AdminPostagensController : ControllerBase
     #region Cadastro e edição
 
     [HttpPost]
-    [Consumes("multipart/form-data")]
     [RequestSizeLimit(5_300_000)]
-    public async Task<IActionResult> Criar(
-        [FromForm] SalvarPostagemDto dados,
-        IFormFile? foto,
-        CancellationToken cancellationToken)
+    public async Task<IActionResult> Criar([FromBody] SalvarPostagemDto dados, CancellationToken cancellationToken)
     {
         var usuarioId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty;
-        var postagem = await _adminPostagensService.CriarAsync(dados, foto, usuarioId, cancellationToken);
+        var postagem = await _adminPostagensService.CriarAsync(dados, usuarioId, cancellationToken);
         return StatusCode(StatusCodes.Status201Created, postagem);
     }
 

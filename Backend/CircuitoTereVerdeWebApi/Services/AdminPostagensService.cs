@@ -35,14 +35,24 @@ public sealed class AdminPostagensService
 
     public async Task<PostagemDto> CriarAsync(
         SalvarPostagemDto dados,
-        IFormFile? arquivoFoto,
         string usuarioId,
         CancellationToken cancellationToken = default)
     {
-        FotoPostagemRegras.ValidarObrigatoria(arquivoFoto is not null);
-        var foto = await PrepararFotoAsync(arquivoFoto!, cancellationToken);
+        byte[] conteudoFoto = null;
+        string tipoConteudoFoto = null;
+
+        var partes = dados.Foto.Split(',');
+
+        // Extrai o tipo do conteúdo (ex: "image/png")
+        tipoConteudoFoto = partes[0].Replace("data:", "").Replace(";base64", "");
+
+        // Converte a string de dados pura em array de bytes
+        conteudoFoto = Convert.FromBase64String(partes[1]);
+
+        FotoPostagemRegras.ValidarObrigatoria(dados.Foto is not null);
+
         return await _postagemService.CriarAsync(
-            dados, foto.Conteudo, foto.TipoConteudo, usuarioId, cancellationToken);
+            dados, conteudoFoto, tipoConteudoFoto, usuarioId, cancellationToken);
     }
 
     public async Task<PostagemDto> AtualizarAsync(

@@ -1,18 +1,23 @@
-import { useState, useEffect } from "react"
-import { Button } from "@/components/ui/button"
-import BotaoParque from "../botaoParque"
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import BotaoParque from "../botaoParque.jsx";
 
-import LogoSerraOrgaos from '../../../assets/logo-serra-orgaos.png'
-import LogoMontanhasTeresopolis from '../../../assets/logo-montanhas-teresopolis.png'
-import LogoTresPicos from '../../../assets/logo-tres-picos.png'
+import LogoSerraOrgaos from "@/assets/logo-serra-orgaos.png";
+import LogoMontanhasTeresopolis from "@/assets/logo-montanhas-teresopolis.png";
+import LogoTresPicos from "@/assets/logo-tres-picos.png";
 
-import { MockStore } from "../../../dados/MockStore.ts";
+import { PostagemDto } from "@/services/postagem.service";
+import { usePostagens } from "@/api/usePostagem";
 
-export default function FiltrosListagem({ retornoFiltro }) {
-  const store = MockStore.getInstance();
-
+export default function FiltrosListagem({
+  retornoFiltro,
+}: {
+  retornoFiltro: (postagens: PostagemDto[]) => void;
+}) {
   const [filtroSelecionado, setFiltroSelecionado] = useState(0);
   const [parqueSelecionado, setParqueSelecionado] = useState(0);
+
+  const { data: postagens, isLoading } = usePostagens(parqueSelecionado);
 
   const botoes = [
     "TODOS",
@@ -22,18 +27,27 @@ export default function FiltrosListagem({ retornoFiltro }) {
     "EVENTOS",
     "NOVIDADES",
     "ATRAÇÕES",
-    "SOBRE"
+    "SOBRE",
   ];
 
   const parques = [
     { label: "Parque Nacional da Serra dos Órgãos", logo: LogoSerraOrgaos },
-    { label: "Parque Natural Municipal Montanhas de Teresópolis", logo: LogoMontanhasTeresopolis },
-    { label: "Parque Estadual dos Três Picos", logo: LogoTresPicos }
+    {
+      label: "Parque Natural Municipal Montanhas de Teresópolis",
+      logo: LogoMontanhasTeresopolis,
+    },
+    { label: "Parque Estadual dos Três Picos", logo: LogoTresPicos },
   ];
 
   useEffect(() => {
-    retornoFiltro(store.getPostagensPorParqueETipo(parqueSelecionado, filtroSelecionado - 1));
-  }, [filtroSelecionado, parqueSelecionado, retornoFiltro, store]);
+    //retornoFiltro(store.getPostagensPorParqueETipo(parqueSelecionado, filtroSelecionado - 1));
+    retornoFiltro(
+      store.getPostagensPorParqueETipo(
+        parqueSelecionado,
+        filtroSelecionado - 1,
+      ),
+    );
+  }, [filtroSelecionado, parqueSelecionado, retornoFiltro]);
 
   return (
     <>
@@ -60,5 +74,5 @@ export default function FiltrosListagem({ retornoFiltro }) {
         ))}
       </div>
     </>
-  )
+  );
 }

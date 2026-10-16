@@ -1,51 +1,61 @@
 import { useState, useEffect } from "react";
-import { MockStore } from "../../dados/MockStore.ts";
 import { ListaParques, ListaTipos } from "../../dados/Enumerations.ts";
+import { PostagemAdminDto } from "@/services/postagem-admin.service.ts";
+import { useCreatePostagem } from "../../api/useAdminPostagem.tsx";
 
-export default function PostagemForm({ postagem, onCancel, onSaved }) {
+interface PostagemFormProps {
+  postagem: PostagemAdminDto;
+  onCancel: () => void;
+  onSaved: () => void;
+}
 
-  const store = MockStore.getInstance();
+const converterParaBase64 = (file: File): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = (error) => reject(error);
+  });
+};
+
+export default function PostagemForm({
+  postagem,
+  onCancel,
+  onSaved,
+}: PostagemFormProps) {
+  const createPostagemMutation = useCreatePostagem();
 
   // ----------------- ESTADO -----------------
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<PostagemAdminDto>({
     parque: ListaParques[0],
     tipo: ListaTipos[0],
     titulo: "",
     descricao: "",
     foto: "",
     dataInicio: "",
-    dataFim: ""
+    dataFim: "",
   });
 
   const [erro, setErro] = useState("");
 
-  // ----------------- CARREGAR DADOS DA EDIÇÃO -----------------
+  // ----------------- CARREGAR DADOS DA EDICAO -----------------
   useEffect(() => {
     if (postagem) {
-      setForm({
-        parque: postagem.parque,
-        tipo: postagem.tipo,
-        titulo: postagem.titulo,
-        descricao: postagem.descricao,
-        foto: postagem.foto,
-        dataInicio: postagem.dataInicio
-          ? postagem.dataInicio.toISOString().substr(0, 10)
-          : "",
-        dataFim: postagem.dataFim
-          ? postagem.dataFim.toISOString().substr(0, 10)
-          : ""
-      });
+      setForm(postagem);
     }
   }, [postagem]);
 
   // ----------------- ATUALIZAR CAMPOS -----------------
-  function atualizar(campo, valor) {
+  function atualizar<K extends keyof PostagemAdminDto>(
+    campo: K,
+    valor: PostagemAdminDto[K],
+  ): void {
     setForm({ ...form, [campo]: valor });
   }
 
   // FOTO
-  function handleFoto(e) {
-    const file = e.target.files[0];
+  function handleFoto(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
     if (!file) return;
 
     const url = URL.createObjectURL(file);
@@ -53,8 +63,7 @@ export default function PostagemForm({ postagem, onCancel, onSaved }) {
   }
 
   // ----------------- SALVAR -----------------
-  function salvar() {
-
+  async function salvar() {
     // ---------- VALIDAÇÕES ----------
     if (!form.titulo.trim()) {
       setErro("Informe um título.");
@@ -79,21 +88,12 @@ export default function PostagemForm({ postagem, onCancel, onSaved }) {
     // limpar erro
     setErro("");
 
-    // montar dados finais
-    const dados = {
-      parque: form.parque,
-      tipo: form.tipo,
-      titulo: form.titulo,
-      descricao: form.descricao,
-      foto: form.foto,
-      dataInicio: form.dataInicio ? new Date(form.dataInicio) : undefined,
-      dataFim: form.dataFim ? new Date(form.dataFim) : undefined,
-    };
-
+    // manda para api
     if (postagem) {
-      store.editarPostagem(postagem.id, dados);
-    } else {
-      store.addPostagem(dados);
+      createPostagemMutation.mutate({
+        ...form,
+        foto: await converterParaBase64(new File([form.foto], "foto.png")),
+      });
     }
 
     if (onSaved) onSaved();
@@ -102,19 +102,17 @@ export default function PostagemForm({ postagem, onCancel, onSaved }) {
   // ----------------- UI -----------------
   return (
     <div className="bg-[#f6f3e7] rounded-xl shadow-md w-[600px] overflow-hidden">
-      
       <div className="p-6 max-h-[90vh] overflow-y-auto">
-
         <h2 className="text-2xl font-semibold text-[#1E4636] mb-5">
           {postagem ? "Editar Postagem" : "Incluir Postagem"}
         </h2>
 
         <div className="flex flex-col gap-3">
-
-
           {/* PARQUE */}
           <div className="flex flex-col gap-1">
-            <label className="text-[#1E4636] font-semibold text-sm">Parque</label>
+            <label className="text-[#1E4636] font-semibold text-sm">
+              Parque
+            </label>
             <select
               className="input"
               value={form.parque}
@@ -128,7 +126,9 @@ export default function PostagemForm({ postagem, onCancel, onSaved }) {
 
           {/* TÍTULO */}
           <div className="flex flex-col gap-1">
-            <label className="text-[#1E4636] font-semibold text-sm">Título</label>
+            <label className="text-[#1E4636] font-semibold text-sm">
+              Título
+            </label>
             <input
               type="text"
               className="input"
@@ -139,7 +139,9 @@ export default function PostagemForm({ postagem, onCancel, onSaved }) {
 
           {/* DESCRIÇÃO */}
           <div className="flex flex-col gap-1">
-            <label className="text-[#1E4636] font-semibold text-sm">Descrição</label>
+            <label className="text-[#1E4636] font-semibold text-sm">
+              Descrição
+            </label>
             <textarea
               className="input h-24"
               value={form.descricao}
@@ -162,10 +164,11 @@ export default function PostagemForm({ postagem, onCancel, onSaved }) {
           </div>
 
           <div className="flex gap-4 w-full">
-
             {/* DATA INÍCIO */}
             <div className="flex flex-col gap-1 w-1/2">
-              <label className="text-[#1E4636] font-semibold text-sm">Data Início</label>
+              <label className="text-[#1E4636] font-semibold text-sm">
+                Data Início
+              </label>
               <input
                 type="date"
                 className="input"
@@ -176,7 +179,9 @@ export default function PostagemForm({ postagem, onCancel, onSaved }) {
 
             {/* DATA FINAL */}
             <div className="flex flex-col gap-1 w-1/2">
-              <label className="text-[#1E4636] font-semibold text-sm">Data Final</label>
+              <label className="text-[#1E4636] font-semibold text-sm">
+                Data Final
+              </label>
               <input
                 type="date"
                 className="input"
@@ -184,7 +189,6 @@ export default function PostagemForm({ postagem, onCancel, onSaved }) {
                 onChange={(e) => atualizar("dataFim", e.target.value)}
               />
             </div>
-
           </div>
 
           {/* FOTO */}
@@ -200,7 +204,7 @@ export default function PostagemForm({ postagem, onCancel, onSaved }) {
             />
 
             <button
-              onClick={() => document.getElementById("fotoInput").click()}
+              onClick={() => document.getElementById("fotoInput")?.click()}
               className="px-4 py-2 bg-secondary text-primary rounded-md font-semibold hover:bg-accent transition"
             >
               Selecionar Foto
@@ -214,7 +218,6 @@ export default function PostagemForm({ postagem, onCancel, onSaved }) {
               />
             )}
           </div>
-
         </div>
 
         {/* ERRO */}
@@ -239,7 +242,6 @@ export default function PostagemForm({ postagem, onCancel, onSaved }) {
             {postagem ? "SALVAR" : "GRAVAR"}
           </button>
         </div>
-
       </div>
     </div>
   );
