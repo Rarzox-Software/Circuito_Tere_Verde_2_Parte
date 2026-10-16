@@ -22,5 +22,6 @@ public sealed class SalvarPostagemDto
     public DateOnly? DataInicio { get; set; }
 
     public DateOnly? DataFim { get; set; }
+    public string Foto { get; set; } = string.Empty;
 }
 

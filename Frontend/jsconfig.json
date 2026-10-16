@@ -1,8 +1,11 @@
 {
   "references": [],
   "compilerOptions": {
+    "jsx": "react-jsx",
+    "allowJs": true,
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
     "allowImportingTsExtensions": true,
-    "baseUrl": ".",
     "paths": {
       "@/*": [
         "./src/*"

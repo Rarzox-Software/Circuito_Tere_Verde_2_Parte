@@ -17,21 +17,21 @@ export default function Painel() {
 
   useEffect(() => {
     setPostagens(store.getTodasPostagens());
-  }, []);
+  }, [setPostagens]);
 
 
 
   // funcoes botoes
   // novo cadastro
   function novoRegistro() {
-    setPostagemSelecionada(null);      
+    setPostagemSelecionada(null);
     setModalAberto(true);
   }
 
   // editar
   function editarRegistro() {
     if (!postagemSelecionada) return;
-    setModalAberto(true);              
+    setModalAberto(true);
   }
 
   //seleciona linha
@@ -75,10 +75,9 @@ export default function Painel() {
 
             <tbody>
               {postagens.map((p) => (
-                <tr key={p.id} 
-                  className={`linha cursor-pointer ${
-                    postagemSelecionada?.id === p.id ? "bg-green-100" : ""
-                  }`}
+                <tr key={p.id}
+                  className={`linha cursor-pointer ${postagemSelecionada?.id === p.id ? "bg-green-100" : ""
+                    }`}
                   onClick={() => selecionarLinha(p)}
                 >
                   <td className="td">{getParque(p.parque)}</td>
@@ -110,12 +109,12 @@ export default function Painel() {
             onCancel={() => setModalAberto(false)}
             onSaved={() => {
               setModalAberto(false);
-              carregar();                      // recarrega lista
+              console.log("Salvou, atualizar lista");
             }}
           />
         </div>
       )}
-    
+
     </div>
   );
 }
