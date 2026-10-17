@@ -52,14 +52,29 @@ Os requisitos funcionais e não funcionais do Frontend estão disponíveis na [p
 - **Lucide React** — Utilizado para inserir ícones leves e consistentes em diferentes partes da interface.
 - **Embla Carousel** — Implementado para criar o carrossel de forma simples, fluida e totalmente integrada aos componentes do React.
 
-## Como executar
+## Instalação e Uso
 
-Para visualizar o Frontend localmente, é necessário ter o Node.js instalado. No terminal, a partir da pasta `Frontend`, execute:
+1. Baixe e instale a versão LTS do Node.js em: https://nodejs.org/
+ 
+2. Clone o repositório:
+   ```bash
+   git clone https://github.com/Rarzox-Software/Circuito_Tere_Verde.git
 
-```bash
-npm install
-npm run dev
-```
+3. Acesse a pasta do Projeto
+   ```bash
+   npm install 
+
+4. Rodar em modo de desenvolvimento
+    ```bash
+    npm run dev
+
+5. Para rodar em produção, deverá utilizar o comando
+    ```bash
+    npm run build
+    
+6. O comando vai gerar uma pasta "dist" e para visualizar, deverá utilizar o comando
+    ```bash
+    npm run preview
 
 O terminal indicará o endereço para abrir no navegador, normalmente `http://localhost:5173`.
 
