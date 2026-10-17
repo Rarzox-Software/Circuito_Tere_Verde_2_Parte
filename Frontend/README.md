@@ -5,9 +5,9 @@
 
 ## Apresentação
 
-O Circuito Terê Verde é um projeto voltado à valorização do ecoturismo em Teresópolis. O Frontend apresenta, em uma única plataforma, informações sobre parques, trilhas, cachoeiras, biodiversidade e outras atrações naturais da região.
+O Frontend do Circuito Terê Verde foi desenvolvido como a interface web do MVP, reunindo páginas e recursos para apresentar os parques e seus conteúdos de ecoturismo. A página principal exibe postagens com filtros por parque e categoria, enquanto a página “Sobre” apresenta informações das unidades de conservação. Também foram criadas telas de login e um painel administrativo para visualizar e simular o cadastro e a edição de postagens.
 
-A proposta é facilitar a descoberta desses lugares e apoiar moradores e turistas no planejamento de visitas mais conscientes.
+A navegação entre essas telas permite demonstrar como visitantes podem explorar os conteúdos e como administradores podem organizá-los. Nesta versão, as postagens e o login do Frontend usam dados simulados.
 
 ## Funcionalidades previstas
 
@@ -63,11 +63,6 @@ npm run dev
 
 O terminal indicará o endereço para abrir no navegador, normalmente `http://localhost:5173`.
 
-## Situação atual e próximos passos
-
-Esta versão do Frontend utiliza dados de demonstração. O login e as postagens são simulados para apresentar a navegação e as telas; as alterações não são armazenadas permanentemente e a interface ainda não está ligada ao banco de dados e à API do projeto.
-
-Como próximos passos, estão previstos conectar a interface ao Backend, ampliar as informações e atrações disponíveis, aprimorar as validações e avaliar recursos de planejamento, como agendamento para camping.
 
 ## Materiais do projeto
 
