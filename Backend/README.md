@@ -1,82 +1,87 @@
-# Backend — Circuito Terê Verde
+# Circuito Terê Verde — Backend
 
-API REST em ASP.NET Core 10 para catálogos, postagens e autenticação de administradores. A persistência usa Entity Framework Core e SQLite; as imagens das postagens são armazenadas no banco.
+## Apresentação
 
-## Requisitos
+O Backend do Circuito Terê Verde foi desenvolvido para organizar e disponibilizar os dados usados pela plataforma. Ele reúne os parques e os tipos de conteúdo do projeto, permite consultar postagens e oferece recursos para que administradores façam o gerenciamento dessas publicações.
 
-- [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0).
+Também foram implementados o armazenamento das informações e das imagens, a autenticação de administradores e regras para controlar o acesso às operações administrativas.
 
-## Executar em desenvolvimento
+## Objetivo do MVP
 
-Na raiz do repositório, execute no PowerShell:
+Construir a parte responsável por manter os conteúdos do Circuito Terê Verde e disponibilizá-los por meio de uma API. O Backend oferece uma base para que visitantes consultem informações e administradores mantenham atualizadas as publicações sobre as unidades de conservação.
+
+## Funcionalidades desenvolvidas
+
+- Consulta aos parques e às categorias de conteúdo cadastradas.
+- Listagem pública de postagens, com filtros e paginação.
+- Exibição de destaques e detalhes de postagens disponíveis ao público.
+- Login, verificação de sessão e saída de administradores.
+- Cadastro, consulta, edição e exclusão de postagens por administradores.
+- Armazenamento das postagens e de suas imagens no banco de dados.
+- Preparação automática do banco e dos dados iniciais ao iniciar a aplicação.
+
+## Principais endpoints
+
+Os endpoints são os caminhos usados para acessar os recursos da API. Os endpoints administrativos exigem uma sessão de administrador.
+
+| Método | Endpoint | Para que serve |
+| --- | --- | --- |
+| GET | `/api/parques` | Consulta os parques disponíveis. |
+| GET | `/api/tipos-postagem` | Consulta as categorias de conteúdo. |
+| GET | `/api/postagens` | Lista postagens públicas; aceita filtros e paginação. |
+| GET | `/api/postagens/destaques` | Consulta postagens em destaque. |
+| GET | `/api/postagens/detalhe` | Consulta uma postagem pública pelo ID. |
+| POST | `/api/auth/login` | Inicia a sessão do administrador. |
+| GET | `/api/auth/me` | Consulta a sessão atual. |
+| POST | `/api/auth/logout` | Encerra a sessão do administrador. |
+| GET | `/api/admin/postagens` | Lista postagens para administração. |
+| GET | `/api/admin/postagens/selecionada` | Consulta uma postagem pelo ID para edição. |
+| POST | `/api/admin/postagens` | Cadastra uma postagem. |
+| PUT | `/api/admin/postagens` | Atualiza uma postagem existente. |
+| DELETE | `/api/admin/postagens` | Exclui uma postagem. |
+
+Os filtros e a paginação da listagem, assim como os IDs usados nas consultas e alterações, são enviados nos cabeçalhos da requisição. O cadastro de uma postagem recebe os dados e a imagem; a imagem deve ser JPG, PNG ou WEBP e ter até 5 MB.
+
+## Tecnologias utilizadas
+
+- **ASP.NET Core 10** — criação da API e organização das rotas.
+- **Entity Framework Core** — comunicação entre a aplicação e o banco de dados.
+- **SQLite** — armazenamento local de parques, postagens, imagens e contas administrativas.
+- **ASP.NET Identity** — autenticação e controle de acesso dos administradores.
+
+## Como executar
+
+É necessário instalar o [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0). No PowerShell, a partir da pasta raiz do repositório, inicie o Backend:
 
 ```powershell
 $env:ASPNETCORE_ENVIRONMENT = "Development"
 dotnet run --project .\Backend\CircuitoTereVerdeWebApi\CircuitoTereVerdeWebApi.csproj --no-launch-profile --urls "https://localhost:2000"
 ```
 
-O ambiente `Development` é necessário para habilitar o Swagger e carregar as configurações locais. O perfil padrão em `Properties/launchSettings.json` usa um IP fixo; o comando acima não depende desse endereço. Acesse [https://localhost:2000/swagger](https://localhost:2000/swagger). Para confiar o certificado HTTPS de desenvolvimento no Windows, se necessário, rode `dotnet dev-certs https --trust` e aceite a instalação.
+O banco de desenvolvimento é criado e preparado automaticamente na primeira execução. A documentação interativa da API fica disponível em [https://localhost:2000/swagger](https://localhost:2000/swagger). Se necessário, confie o certificado HTTPS de desenvolvimento com `dotnet dev-certs https --trust`.
 
-Na inicialização, `DatabaseInitializer` aplica as migrações pendentes, prepara os perfis `USUARIO` e `ADMINISTRADOR` e cria o administrador configurado, se ainda não existir.
-
-Credenciais locais definidas em `CircuitoTereVerdeWebApi/appsettings.Development.json`:
+Credenciais de administrador para desenvolvimento:
 
 - E-mail: `admin@circuitotereverde.test`
 - Senha: `AdminTeste123!`
 
-Essas credenciais são apenas para desenvolvimento. Não as use em produção.
+Essas credenciais servem apenas para uso local.
 
-## Banco e configurações
+## Situação atual
 
-- Desenvolvimento: `Backend/circuito-tereverde-dev.db`.
-- Produção: `Backend/circuito-tereverde.db`.
-- Migração inicial: `CircuitoTereVerde.Core/Infra/Migrations`.
+O Backend está implementado e pode ser executado e consultado separadamente. No momento, o Frontend ainda apresenta dados simulados e não está integrado à API. A conexão entre as duas partes é um próximo passo do projeto.
 
-Os caminhos são resolvidos a partir do diretório da API. Um banco novo é criado automaticamente na inicialização; não é necessário executar uma migração manual para o fluxo normal de desenvolvimento.
+## Requisitos e materiais
 
-As configurações podem ser substituídas por variáveis de ambiente. Para produção, informe credenciais próprias e configure as origens exatas do Frontend:
-
-```powershell
-$env:ASPNETCORE_ENVIRONMENT = "Production"
-$env:BootstrapAdmin__Name = "Administrador"
-$env:BootstrapAdmin__Email = "admin@seu-dominio.com"
-$env:BootstrapAdmin__Password = "SuaSenhaForteComNumero1"
-$env:Cors__AllowedOrigins__0 = "https://seu-dominio.com"
-dotnet run --project .\Backend\CircuitoTereVerdeWebApi\CircuitoTereVerdeWebApi.csproj --no-launch-profile --urls "https://localhost:2000"
-```
-
-Em produção, configure também `ConnectionStrings__DefaultConnection` se o banco precisar ficar em outro local. Use HTTPS. A API não aceita cadastro público de administradores. O cookie de autenticação é `HttpOnly`, `Secure` e `SameSite=Strict`.
-
-Em desenvolvimento, o CORS permite `http://localhost:5173`. O Frontend atual ainda não chama a API; consulte [README do Frontend](../Frontend/README.md) para essa limitação.
-
-## Rotas
-
-| Método | Rota | Acesso | Observação |
-| --- | --- | --- | --- |
-| GET | `/api/parques` | Público | Lista parques |
-| GET | `/api/tipos-postagem` | Público | Lista tipos de postagem |
-| GET | `/api/postagens` | Público | Paginação e filtros via cabeçalhos `parque`, `tipo`, `pagina`, `tamanhoPagina` |
-| GET | `/api/postagens/destaques` | Público | Até cinco postagens visíveis, sem tipo `SOBRE` |
-| GET | `/api/postagens/detalhe` | Público | ID no cabeçalho `id`; postagem deve estar visível |
-| POST | `/api/auth/login` | Público | Inicia sessão do administrador |
-| GET | `/api/auth/me` | Autenticado | Retorna a sessão atual |
-| POST | `/api/auth/logout` | Autenticado | Encerra a sessão |
-| GET | `/api/admin/postagens` | Administrador | Inclui futuras e encerradas; paginação via `pagina`, `tamanhoPagina` |
-| GET | `/api/admin/postagens/selecionada` | Administrador | ID no cabeçalho `id` |
-| POST | `/api/admin/postagens` | Administrador | Cria postagem via `multipart/form-data` |
-| PUT | `/api/admin/postagens` | Administrador | Atualiza postagem; ID no cabeçalho `id` |
-| DELETE | `/api/admin/postagens` | Administrador | Exclui postagem; ID no cabeçalho `id` |
-
-O formulário de postagem usa `parque`, `tipo`, `titulo`, `descricao`, `dataInicio` e `dataFim`. Na criação, a imagem é obrigatória e vai no campo multipart `foto`; na edição, ela pode ser substituída. O formato deve ser JPG, PNG ou WEBP e o tamanho máximo é 5 MB. As respostas incluem a imagem como data URI Base64 no campo `foto`.
-
-As chamadas de navegador que usem o cookie de sessão devem enviar credenciais (`credentials: "include"`). Para filtros e IDs, use os cabeçalhos indicados na tabela.
+- [Requisitos do Backend](../requisitos/Requisitos_Backend.xlsx)
+- [README principal do Circuito Terê Verde](../README.md)
+- [Documentação do Frontend](../Frontend/README.md)
+- [Apresentação do MVP](../Apresentação/Apresentacao_MVP.pptx)
 
 ## Testes
 
-Na raiz do repositório:
+O projeto inclui testes para autenticação, rotas, gerenciamento de postagens e inicialização do banco. Para executá-los, use o comando abaixo na raiz do repositório:
 
 ```powershell
 dotnet test .\Backend\CircuitoTereVerde.Tests\CircuitoTereVerde.Tests.csproj
 ```
-
-Os testes cobrem autenticação, rotas principais, CRUD de postagens e inicialização do banco.
