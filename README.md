@@ -51,65 +51,16 @@ O MVP do Circuito Terê Verde consiste em uma plataforma digital mínima e funci
 - *Acesso remoto e conveniente*: Plataforma disponível em múltiplos dispositivos.
 
 
-## Protótipos
-Para entender melhor a interface do sistema, fizemos algumas prototipagens. Abaixo estão as imagens das prototipagens em JPEG/PNG.
-Foi utilizado o Figma para realizar os protótipos:
-
-🔗 [Link do Protótipo no Figma](https://www.figma.com/design/8h9bIUN2wJT7pQEnlBlgL0/Circuito-Tere-Verde?node-id=0-1&t=ZuovEVVD7DJLBvDC-1)
-![Prototipagem 1](./Frontend/prototipo/Principal.png)
-![Prototipagem 2](./Frontend/prototipo/Login.png)
-![Prototipagem 3](./Frontend/prototipo/Painel.png)
-![Prototipagem 4](./Frontend/prototipo/Registro.png)
-
-## Lista de Requisitos
-
-Os requisitos funcionais e não funcionais deste projeto estão organizados em uma planilha para facilitar a visualização e o gerenciamento.
-
-🔗 [Clique aqui para acessar a planilha de requisitos](https://docs.google.com/spreadsheets/d/17M4lhHh-zplAb1LycOdzhCNI1cL9nvuHoTDNzm8jUvw/edit?usp=sharing)
-- [Baixar Planilha](https://raw.githubusercontent.com/Rarzox-Software/Circuito_Tere_Verde/main/requisitos/Requisitos%20-%20Circuito%20Tere%20Verde.xlsx)
-
-
 ## Slide de Apresentação
 Você pode visualizar os slides de apresentação do MVP no link abaixo:
 
 [Slides de Apresentação](https://gtiunifeso-my.sharepoint.com/:p:/g/personal/nauanlima_unifeso_com_vc/IQBJe6kAHZOgTawivyfIlXn0AfEWFrAa0uvdk4LgmooNpIY?e=fCOpgB)
 
-## Tecnologias Utilizadas
 
-- **Vite** — Utilizado como bundler e servidor de desenvolvimento para garantir builds rápidas e um ambiente leve durante o desenvolvimento.
-- **React** — Utilizado para estruturar toda a interface do site por meio de componentes funcionais.
-- **Tailwind CSS** — Usado para estilizar o projeto com classes utilitárias, mantendo o layout rápido de ajustar e responsivo.
-- **Lucide React** — Utilizado para inserir ícones leves e consistentes em diferentes partes da interface.
-- **Embla Carousel** — Implementado para criar o carrossel de forma simples, fluida e totalmente integrada aos componentes do React.
+## Frontend
 
-## Instalação e Uso
+[README do Frontend](./Frontend/README.md)
 
-1. Baixe e instale a versão LTS do Node.js em: https://nodejs.org/
- 
-2. Clone o repositório:
-   ```bash
-   git clone https://github.com/Rarzox-Software/Circuito_Tere_Verde.git
+## Backend
 
-3. Acesse a pasta do Projeto
-   ```bash
-   npm install 
-
-4. Rodar em modo de desenvolvimento
-    ```bash
-    npm run dev
-
-5. Para rodar em produção, deverá utilizar o comando
-    ```bash
-    npm run build
-    
-6. O comando vai gerar uma pasta "dist" e para visualizar, deverá utilizar o comando
-    ```bash
-    npm run preview
-
-## Melhorias Futuras
-- Integração com um banco de dados para salvar usuários e agendamentos.
-- Possibilidade de Cadastrar mais parques e atrações.
-- Feedback visual mais interativo para validações.
-- Agendamento para Camping.
-dações.
-- Agendamento para Camping.
+[README do Backend](./Backend/README.md)

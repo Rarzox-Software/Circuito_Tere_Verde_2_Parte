@@ -39,6 +39,7 @@ As telas foram planejadas no Figma e serviram como referência para a construç�
 
 ![Protótipo da tela de cadastro](./prototipo/Registro.png)
 
+
 ## Requisitos do Frontend
 
 Os requisitos funcionais e não funcionais do Frontend estão disponíveis na [planilha de requisitos](../requisitos/Requisitos_Frontend.xlsx).

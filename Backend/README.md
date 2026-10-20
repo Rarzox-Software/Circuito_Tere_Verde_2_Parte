@@ -2,7 +2,7 @@
 
 ## Apresentação
 
-O Backend do Circuito Terê Verde foi desenvolvido para organizar e disponibilizar os dados usados pela plataforma. Ele reúne os parques e os tipos de conteúdo do projeto, permite consultar postagens e oferece recursos para que administradores façam o gerenciamento dessas publicações.
+O Backend  foi desenvolvido para organizar e disponibilizar os dados usados pela plataforma. Ele reúne os parques e os tipos de conteúdo do projeto, permite consultar postagens e oferece recursos para que administradores façam o gerenciamento dessas publicações.
 
 Também foram implementados o armazenamento das informações e das imagens, a autenticação de administradores e regras para controlar o acesso às operações administrativas.
 
@@ -51,25 +51,13 @@ Os filtros e a paginação da listagem, assim como os IDs usados nas consultas e
 
 ## Como executar
 
-É necessário instalar o [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0). No PowerShell, a partir da pasta raiz do repositório, inicie o Backend:
+É necessário instalar o [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0).
+.
+.
+.
+.
+.
 
-```powershell
-$env:ASPNETCORE_ENVIRONMENT = "Development"
-dotnet run --project .\Backend\CircuitoTereVerdeWebApi\CircuitoTereVerdeWebApi.csproj --no-launch-profile --urls "https://localhost:2000"
-```
-
-O banco de desenvolvimento é criado e preparado automaticamente na primeira execução. A documentação interativa da API fica disponível em [https://localhost:2000/swagger](https://localhost:2000/swagger). Se necessário, confie o certificado HTTPS de desenvolvimento com `dotnet dev-certs https --trust`.
-
-Credenciais de administrador para desenvolvimento:
-
-- E-mail: `admin@circuitotereverde.test`
-- Senha: `AdminTeste123!`
-
-Essas credenciais servem apenas para uso local.
-
-## Situação atual
-
-O Backend está implementado e pode ser executado e consultado separadamente. No momento, o Frontend ainda apresenta dados simulados e não está integrado à API. A conexão entre as duas partes é um próximo passo do projeto.
 
 ## Requisitos e materiais
 
@@ -77,11 +65,3 @@ O Backend está implementado e pode ser executado e consultado separadamente. No
 - [README principal do Circuito Terê Verde](../README.md)
 - [Documentação do Frontend](../Frontend/README.md)
 - [Apresentação do MVP](../Apresentação/Apresentacao_MVP.pptx)
-
-## Testes
-
-O projeto inclui testes para autenticação, rotas, gerenciamento de postagens e inicialização do banco. Para executá-los, use o comando abaixo na raiz do repositório:
-
-```powershell
-dotnet test .\Backend\CircuitoTereVerde.Tests\CircuitoTereVerde.Tests.csproj
-```
