@@ -5,9 +5,9 @@
 
 ## Apresentação
 
-O Frontend do Circuito Terê Verde foi desenvolvido como a interface web do MVP, reunindo páginas e recursos para apresentar os parques e seus conteúdos de ecoturismo. A página principal exibe postagens com filtros por parque e categoria, enquanto a página “Sobre” apresenta informações das unidades de conservação. Também foram criadas telas de login e um painel administrativo para visualizar e simular o cadastro e a edição de postagens.
+O Frontend foi desenvolvido como a interface do MVP, reunindo páginas e recursos para apresentar os parques e seus conteúdos de ecoturismo. A página principal exibe postagens com filtros por parque e categoria, enquanto a página “Sobre” apresenta informações das unidades de conservação. Também foram criadas telas de login e um painel administrativo para visualizar e simular o cadastro e a edição de postagens.
 
-A navegação entre essas telas permite demonstrar como visitantes podem explorar os conteúdos e como administradores podem organizá-los. Nesta versão, as postagens e o login do Frontend usam dados simulados.
+A navegação entre essas telas permite demonstrar como visitantes podem explorar os conteúdos e como administradores podem organizá-los.
 
 ## Funcionalidades previstas
 
@@ -42,7 +42,7 @@ As telas foram planejadas no Figma e serviram como referência para a construç�
 
 ## Requisitos do Frontend
 
-Os requisitos funcionais e não funcionais do Frontend estão disponíveis na [planilha de requisitos](../requisitos/Requisitos_Frontend.xlsx).
+Os requisitos funcionais e não funcionais do Frontend estão disponíveis em [planilha de requisitos](../requisitos/Requisitos_Frontend.xlsx).
 
 
 ## Tecnologias Utilizadas
