@@ -1,59 +1,67 @@
-# Backend
+# Circuito Terê Verde — Backend
 
-API do Circuito Tere Verde em ASP.NET Core, com Identity e SQLite. As imagens ficam no banco junto das postagens.
+## Apresentação
 
-## Preparar o administrador
+O Backend  foi desenvolvido para organizar e disponibilizar os dados usados pela plataforma. Ele reúne os parques e os tipos de conteúdo do projeto, permite consultar postagens e oferece recursos para que administradores façam o gerenciamento dessas publicações.
 
-Não existe cadastro público. Em desenvolvimento, o `appsettings.Development.json` já configura uma conta de teste:
+Também foram implementados o armazenamento das informações e das imagens, a autenticação de administradores e regras para controlar o acesso às operações administrativas.
 
-- E-mail: `admin@circuitotereverde.test`
-- Senha: `AdminTeste123!`
+## Objetivo do MVP
 
-Em produção, o e-mail e a senha ficam vazios no `appsettings.Production.json`. Informe os dois por variáveis de ambiente antes de iniciar a API:
+Construir a parte responsável por manter os conteúdos do Circuito Terê Verde e disponibilizá-los por meio de uma API. O Backend oferece uma base para que visitantes consultem informações e administradores mantenham atualizadas as publicações sobre as unidades de conservação.
 
-```powershell
-$env:BootstrapAdmin__Email = "admin@exemplo.com"
-$env:BootstrapAdmin__Password = "DefinaUmaSenhaForte1"
-```
+## Funcionalidades desenvolvidas
 
-Ao iniciar a API, o banco e os perfis `USUARIO` e `ADMINISTRADOR` são preparados. A conta configurada é criada pelo Identity, que protege a senha com hash e atribui o perfil `ADMINISTRADOR`. Se ela já existir, não é duplicada e sua senha é preservada. Com as duas credenciais vazias, a API prepara o banco, mas não cria uma conta.
+- Consulta aos parques e às categorias de conteúdo cadastradas.
+- Listagem pública de postagens, com filtros e paginação.
+- Exibição de destaques e detalhes de postagens disponíveis ao público.
+- Login, verificação de sessão e saída de administradores.
+- Cadastro, consulta, edição e exclusão de postagens por administradores.
+- Armazenamento das postagens e de suas imagens no banco de dados.
+- Preparação automática do banco e dos dados iniciais ao iniciar a aplicação.
 
-Em desenvolvimento, o `appsettings.Development.json` usa `Backend/circuito-tereverde-dev.db`. Em produção, o `appsettings.Production.json` usa `Backend/circuito-tereverde.db`. A conexão também pode ser substituída pela variável `ConnectionStrings__DefaultConnection`.
+## Principais endpoints
 
-## Frontend e cookies
+Os endpoints são os caminhos usados para acessar os recursos da API. Os endpoints administrativos exigem uma sessão de administrador.
 
-Em desenvolvimento, o CORS permite `http://localhost:5173`. Para outro endereço ou produção, configure `Cors:AllowedOrigins` com as origens exatas do frontend. Não use `*`, pois a API aceita cookies.
-
-O cookie de autenticação é `HttpOnly`, `SameSite=Strict` e `Secure` em todos os ambientes. A API deve usar HTTPS. O frontend e a API devem estar no mesmo site para o navegador enviar o cookie. Essas opções são definidas em `AutenticacaoDependencies`, sem seção `Cookie` no appsettings.
-
-Para chamadas do navegador, use `credentials: "include"`. Não há rota nem token CSRF. Filtros, paginação e ID da postagem são enviados nos cabeçalhos `parque`, `tipo`, `pagina`, `tamanhoPagina` e `id`, conforme a rota.
-
-## Rotas principais
-
-| Método | Rota | Acesso |
+| Método | Endpoint | Para que serve |
 | --- | --- | --- |
-| GET | `/api/parques` | Público |
-| GET | `/api/tipos-postagem` | Público |
-| GET | `/api/postagens` | Público; filtros e paginação nos cabeçalhos `parque`, `tipo`, `pagina` e `tamanhoPagina` |
-| GET | `/api/postagens/destaques` | Público; até cinco postagens visíveis, sem `SOBRE` |
-| GET | `/api/postagens/detalhe` | Público; ID no cabeçalho `id`; somente enquanto a postagem estiver visível |
-| GET | `/api/admin/postagens` | Administrador; inclui postagens futuras e encerradas; paginação nos cabeçalhos `pagina` e `tamanhoPagina` |
-| GET | `/api/admin/postagens/selecionada` | Administrador; ID no cabeçalho `id` |
-| POST | `/api/admin/postagens` | Administrador; multipart/form-data |
-| PUT | `/api/admin/postagens` | Administrador; multipart/form-data; ID no cabeçalho `id` |
-| DELETE | `/api/admin/postagens` | Administrador; ID no cabeçalho `id` |
-| POST | `/api/auth/login` | Público; cria a sessão do administrador |
-| GET | `/api/auth/me` | Autenticado |
-| POST | `/api/auth/logout` | Autenticado |
+| GET | `/api/parques` | Consulta os parques disponíveis. |
+| GET | `/api/tipos-postagem` | Consulta as categorias de conteúdo. |
+| GET | `/api/postagens` | Lista postagens públicas; aceita filtros e paginação. |
+| GET | `/api/postagens/destaques` | Consulta postagens em destaque. |
+| GET | `/api/postagens/detalhe` | Consulta uma postagem pública pelo ID. |
+| POST | `/api/auth/login` | Inicia a sessão do administrador. |
+| GET | `/api/auth/me` | Consulta a sessão atual. |
+| POST | `/api/auth/logout` | Encerra a sessão do administrador. |
+| GET | `/api/admin/postagens` | Lista postagens para administração. |
+| GET | `/api/admin/postagens/selecionada` | Consulta uma postagem pelo ID para edição. |
+| POST | `/api/admin/postagens` | Cadastra uma postagem. |
+| PUT | `/api/admin/postagens` | Atualiza uma postagem existente. |
+| DELETE | `/api/admin/postagens` | Exclui uma postagem. |
 
-O DTO de postagem usa os campos `parque`, `tipo`, `titulo`, `descricao`, `dataInicio` e `dataFim`; a imagem selecionada é enviada no campo multipart `foto` ao gravar. A API valida o tipo e o tamanho (JPG, PNG ou WEBP até 5 MB) e salva os bytes no SQLite. A foto é devolvida dentro do próprio campo `foto` como data URI em Base64, que o React usa diretamente em `img src`. `parque` aceita o código ou nome do parque; `tipo` usa os valores do frontend, como `TRILHAS` e `ATRAÇÕES`.
+Os filtros e a paginação da listagem, assim como os IDs usados nas consultas e alterações, são enviados nos cabeçalhos da requisição. O cadastro de uma postagem recebe os dados e a imagem; a imagem deve ser JPG, PNG ou WEBP e ter até 5 MB.
 
-## Migrações e dados iniciais
+## Tecnologias utilizadas
 
-A migração `Inicial` já está gerada em `CircuitoTereVerde.Core/Infra/Migrations`. Ela cria as tabelas e insere os três parques e os sete tipos de postagem. Cada postagem guarda `FotoPostagemId`, que aponta para uma foto com ID próprio em `FotosPostagem`. A exclusão da postagem também remove sua foto.
+- **ASP.NET Core 10** — criação da API e organização das rotas.
+- **Entity Framework Core** — comunicação entre a aplicação e o banco de dados.
+- **SQLite** — armazenamento local de parques, postagens, imagens e contas administrativas.
+- **ASP.NET Identity** — autenticação e controle de acesso dos administradores.
 
-Os IDs inteiros são gerados automaticamente pelo SQLite. As contas e os perfis recebem IDs gerados pelo Identity. Os IDs dos parques e tipos base são informados somente na migração para inserir os catálogos fixos.
+## Como executar
 
-Em cada início, `DatabaseInitializer` chama `MigrateAsync` para criar um banco novo ou aplicar todas as migrações pendentes. As migrações já aplicadas não são executadas novamente. Depois, o Identity prepara os perfis e o administrador conforme o appsettings; a senha não fica na migração.
+É necessário instalar o [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0).
+.
+.
+.
+.
+.
 
-Os testes usam a API e o SQLite fixo de desenvolvimento, com o administrador configurado nesse ambiente. Eles validam login, principal, CRUD com foto, Swagger e a preparação dos dados sem duplicação. As postagens criadas pelos testes são removidas ao terminar.
+
+## Requisitos e materiais
+
+- [Requisitos do Backend](../requisitos/Requisitos_Backend.xlsx)
+- [README principal do Circuito Terê Verde](../README.md)
+- [Documentação do Frontend](../Frontend/README.md)
+- [Apresentação do MVP](../Apresentação/Apresentacao_MVP.pptx)
