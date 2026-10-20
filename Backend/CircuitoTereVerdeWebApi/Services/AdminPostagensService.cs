@@ -35,14 +35,21 @@ public sealed class AdminPostagensService
 
     public async Task<PostagemDto> CriarAsync(
         SalvarPostagemDto dados,
-        IFormFile? arquivoFoto,
         string usuarioId,
         CancellationToken cancellationToken = default)
     {
-        FotoPostagemRegras.ValidarObrigatoria(arquivoFoto is not null);
-        var foto = await PrepararFotoAsync(arquivoFoto!, cancellationToken);
+        FotoPostagemRegras.ValidarObrigatoria(!string.IsNullOrWhiteSpace(dados.Foto));
+        var partes = dados.Foto.Split(',', 2);
+        if (partes.Length != 2)
+        {
+            throw new ErroDominioException("Imagem da postagem invalida.");
+        }
+
+        var tipoConteudoFoto = partes[0].Replace("data:", "").Replace(";base64", "");
+        var conteudoFoto = Convert.FromBase64String(partes[1]);
+
         return await _postagemService.CriarAsync(
-            dados, foto.Conteudo, foto.TipoConteudo, usuarioId, cancellationToken);
+            dados, conteudoFoto, tipoConteudoFoto, usuarioId, cancellationToken);
     }
 
     public async Task<PostagemDto> AtualizarAsync(

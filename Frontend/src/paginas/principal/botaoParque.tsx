@@ -1,6 +1,12 @@
-import React from 'react';
+import type { HTMLAttributes } from "react";
 
-export default function BotaoParque({ logo, label, selecionado, ...props }) {
+interface BotaoParqueProps extends HTMLAttributes<HTMLDivElement> {
+  logo: string;
+  label: string;
+  selecionado: boolean;
+}
+
+export default function BotaoParque({ logo, label, selecionado, ...props }: BotaoParqueProps) {
   return (
     <div
       className="h-full flex flex-col items-center cursor-pointer"
