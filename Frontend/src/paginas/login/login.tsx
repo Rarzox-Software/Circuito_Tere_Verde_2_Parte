@@ -17,22 +17,19 @@ export default function Login() {
   async function fazerLogin(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    const resultado = await createLoginMutation.mutateAsync({
-      email: login,
-      senha,
-    });
+    try {
+      await createLoginMutation.mutateAsync({
+        email: login,
+        senha,
+      });
 
-    console.log(resultado);
+      setErro("");
 
-    if (!resultado) {
+      // Direciona para painel de controle
+      navigate("/postagens");
+    } catch {
       setErro("Email ou senha inválidos.");
-      return;
     }
-
-    setErro("");
-
-    // direciona para painel de controle
-    navigate("/postagens");
   }
 
   return (

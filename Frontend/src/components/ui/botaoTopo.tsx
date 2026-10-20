@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { ArrowUp } from "lucide-react"; 
 
-export default function BotaoTopo() {
+export default function BotaoTopo(): React.JSX.Element {
   const [visivel, setVisivel] = useState(false);
 
   // Mostrar botão somente após rolar a página

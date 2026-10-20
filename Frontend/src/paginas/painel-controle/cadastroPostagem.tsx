@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
-import { ListaParques, ListaTipos } from "../../dados/Enumerations.ts";
-import { PostagemAdminDto } from "@/services/postagem-admin.service.ts";
-import { useCreatePostagem } from "../../api/useAdminPostagem.tsx";
+import type { PostagemDto } from "@/services/postagem.service";
+import type { SalvarPostagemDto } from "@/services/postagem-admin.service";
+import { useCreatePostagem, useUpdatePostagem } from "@/api/useAdminPostagem";
+import { useParques, useTiposPostagem } from "@/api/useCatalogo";
 
 interface PostagemFormProps {
-  postagem: PostagemAdminDto;
+  postagem: PostagemDto | null;
   onCancel: () => void;
   onSaved: () => void;
 }
@@ -24,11 +25,14 @@ export default function PostagemForm({
   onSaved,
 }: PostagemFormProps) {
   const createPostagemMutation = useCreatePostagem();
+  const updatePostagemMutation = useUpdatePostagem();
+  const { data: parques = [] } = useParques();
+  const { data: tipos = [] } = useTiposPostagem();
 
-  // ----------------- ESTADO -----------------
-  const [form, setForm] = useState<PostagemAdminDto>({
-    parque: ListaParques[0],
-    tipo: ListaTipos[0],
+  // Estado do formulario
+  const [form, setForm] = useState<SalvarPostagemDto>({
+    parque: "",
+    tipo: "",
     titulo: "",
     descricao: "",
     foto: "",
@@ -37,18 +41,36 @@ export default function PostagemForm({
   });
 
   const [erro, setErro] = useState("");
+  const [fotoArquivo, setFotoArquivo] = useState<File | null>(null);
 
-  // ----------------- CARREGAR DADOS DA EDICAO -----------------
+  // Carrega dados da edicao
   useEffect(() => {
     if (postagem) {
-      setForm(postagem);
+      setForm({
+        parque: parques.find((parque) => parque.nome === postagem.parque)?.codigo ?? postagem.parque,
+        tipo: tipos.find((tipo) => tipo.nome === postagem.tipo)?.codigo ?? postagem.tipo,
+        titulo: postagem.titulo,
+        descricao: postagem.descricao,
+        foto: postagem.foto,
+        dataInicio: postagem.dataInicio,
+        dataFim: postagem.dataFim ?? "",
+      });
+      setFotoArquivo(null);
+      return;
     }
-  }, [postagem]);
 
-  // ----------------- ATUALIZAR CAMPOS -----------------
-  function atualizar<K extends keyof PostagemAdminDto>(
+    setForm((formAtual) => ({
+      ...formAtual,
+      parque: formAtual.parque || parques[0]?.codigo || "",
+      tipo: formAtual.tipo || tipos[0]?.codigo || "",
+    }));
+    setFotoArquivo(null);
+  }, [postagem, parques, tipos]);
+
+  // Atualiza campos do formulario
+  function atualizar<K extends keyof SalvarPostagemDto>(
     campo: K,
-    valor: PostagemAdminDto[K],
+    valor: SalvarPostagemDto[K],
   ): void {
     setForm({ ...form, [campo]: valor });
   }
@@ -60,11 +82,11 @@ export default function PostagemForm({
 
     const url = URL.createObjectURL(file);
     setForm({ ...form, foto: url });
+    setFotoArquivo(file);
   }
 
-  // ----------------- SALVAR -----------------
+  // Salva a postagem
   async function salvar() {
-    // ---------- VALIDAÇÕES ----------
     if (!form.titulo.trim()) {
       setErro("Informe um título.");
       return;
@@ -80,23 +102,31 @@ export default function PostagemForm({
       return;
     }
 
-    if (!form.foto) {
+    if (!postagem && !fotoArquivo) {
       setErro("Selecione uma foto.");
       return;
     }
 
-    // limpar erro
     setErro("");
 
-    // manda para api
-    if (postagem) {
-      createPostagemMutation.mutate({
-        ...form,
-        foto: await converterParaBase64(new File([form.foto], "foto.png")),
-      });
-    }
+    try {
+      if (postagem) {
+        await updatePostagemMutation.mutateAsync({
+          id: postagem.id,
+          postagem: form,
+          foto: fotoArquivo ?? undefined,
+        });
+      } else {
+        await createPostagemMutation.mutateAsync({
+          ...form,
+          foto: await converterParaBase64(fotoArquivo!),
+        });
+      }
 
-    if (onSaved) onSaved();
+      onSaved();
+    } catch (error) {
+      setErro(error instanceof Error ? error.message : "Nao foi possivel salvar a postagem.");
+    }
   }
 
   // ----------------- UI -----------------
@@ -118,8 +148,8 @@ export default function PostagemForm({
               value={form.parque}
               onChange={(e) => atualizar("parque", e.target.value)}
             >
-              {ListaParques.map((p) => (
-                <option key={p}>{p}</option>
+              {parques.map((parque) => (
+                <option key={parque.id} value={parque.codigo}>{parque.nome}</option>
               ))}
             </select>
           </div>
@@ -157,8 +187,8 @@ export default function PostagemForm({
               value={form.tipo}
               onChange={(e) => atualizar("tipo", e.target.value)}
             >
-              {ListaTipos.map((t) => (
-                <option key={t}>{t}</option>
+              {tipos.map((tipo) => (
+                <option key={tipo.id} value={tipo.codigo}>{tipo.nome}</option>
               ))}
             </select>
           </div>

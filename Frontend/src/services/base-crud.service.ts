@@ -3,64 +3,31 @@ export class BaseCrudService<T> {
 
   constructor(endpoint: string, baseApiUrl: string = "/api") {
     this.baseUrl = `${baseApiUrl}${endpoint}`;
-    console.log(`BaseCrudService initialized with endpoint: ${this.baseUrl}`);
   }
 
-  // tratar as requisições HTTP
+  // Trata as requisicoes HTTP
   protected async request<R>(url: string, config: RequestInit): Promise<R> {
-    try {
-      console.log(`Making request to: ${url} with config:`, config);
-      const response = await fetch(url, {
-        headers: {
-          "Content-Type": "application/json",
-          ...config.headers,
-        },
-        ...config,
-      });
-
-      if (!response.ok) {
-        throw new Error(
-          `Erro na requisição: ${response.status} - ${response.statusText}`,
-        );
-      }
-
-      // Evita erro se for vazio
-      if (response.status === 204) {
-        return {} as R;
-      }
-
-      return await response.json();
-    } catch (error) {
-      throw error;
+    const headers = new Headers(config.headers);
+    if (config.body && !(config.body instanceof FormData)) {
+      headers.set("Content-Type", "application/json");
     }
-  }
 
-  // criar
-  async create(data: T): Promise<T> {
-    return this.request<T>(this.baseUrl, {
-      method: "POST",
-      body: JSON.stringify(data),
+    const response = await fetch(url, {
+      ...config,
+      credentials: "include",
+      headers,
     });
-  }
 
-  // ler
-  async getAll(): Promise<T[]> {
-    return this.request<T[]>(this.baseUrl, {
-      method: "GET",
-    });
-  }
+    if (!response.ok) {
+      const erro = await response.json().catch(() => null);
+      throw new Error(erro?.detail ?? erro?.title ?? `Erro na requisicao: ${response.status}.`);
+    }
 
-  // get
-  async getById(id: string | number): Promise<T> {
-    return this.request<T>(`${this.baseUrl}/${id}`, {
-      method: "GET",
-    });
-  }
+    // Evita erro em respostas sem conteudo
+    if (response.status === 204) {
+      return undefined as R;
+    }
 
-  // deletar
-  async delete(id: string | number): Promise<void> {
-    return this.request<void>(`${this.baseUrl}/${id}`, {
-      method: "DELETE",
-    });
+    return response.json() as Promise<R>;
   }
 }

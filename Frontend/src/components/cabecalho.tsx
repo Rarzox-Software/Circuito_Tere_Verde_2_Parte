@@ -1,32 +1,23 @@
-import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import Logo from "../assets/logo.svg?react";
-import { MockStore } from "../dados/MockStore";
+import { useLogout, useUsuarioAtual } from "@/api/useLogin";
 import Container from "./container";
 
 export default function Cabecalho() {
-
-  const store = MockStore.getInstance();
   const navigate = useNavigate();
   const location = useLocation();
-
-  const [logado, setLogado] = useState(store.estaLogado());
-
-  // Detecta login/logout
-  useEffect(() => {
-    store.subscribe(() => {
-      setLogado(store.estaLogado());
-    });
-  }, []);
+  const { data: usuario } = useUsuarioAtual();
+  const logoutMutation = useLogout();
+  const logado = Boolean(usuario);
 
   const estaNaPaginaPostagens = location.pathname === "/postagens";
 
-  function sair() {
-    store.logout();
+  async function sair() {
+    await logoutMutation.mutateAsync();
     navigate("/");
   }
 
-  //Retorna título conforme rota
+  // Retorna titulo conforme rota
   function obterTitulo() {
     if (location.pathname === "/postagens") return "Postagens";
     return "Circuito Terê Verde";

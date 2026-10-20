@@ -1,6 +1,5 @@
-import * as React from "react"
 import Autoplay from "embla-carousel-autoplay"
-import { MockStore } from "../../dados/MockStore.ts";
+import { useDestaques } from "@/api/usePostagem";
 
 import {
   Carousel,
@@ -11,9 +10,7 @@ import {
 } from "@/components/ui/carousel"
 
 export default function CustomCarousel() {
-
-  const store = MockStore.getInstance(); // acessa dados mocado
-  const postagens = store.getUltimasPostagens();  // pega as 5 últimas Postagens
+  const { data: postagens = [] } = useDestaques();
 
   return (
     <Carousel

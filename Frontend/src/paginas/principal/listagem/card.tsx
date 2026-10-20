@@ -6,17 +6,23 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import { Fragment, type HTMLAttributes } from "react";
+import type { PostagemDto } from "@/services/postagem.service";
 
-function formatText(text) {
+interface CardPostagemProps extends HTMLAttributes<HTMLDivElement> {
+  postagem: PostagemDto;
+}
+
+function formatText(text: string) {
   return text.split("\n").map((line, i) => (
-    <>
+    <Fragment key={i}>
       {line}
-      <br key={i} />
-    </>
+      <br />
+    </Fragment>
   ));
 }
 
-export default function CardPostagem({ postagem, className, ...props }) {
+export default function CardPostagem({ postagem, className, ...props }: CardPostagemProps) {
   return (
     <Card
       className={className}
@@ -40,7 +46,7 @@ export default function CardPostagem({ postagem, className, ...props }) {
       </CardHeader>
 
       <CardFooter>
-        <p> Data da Publicação {postagem.dataPublicacao.toLocaleString('pt-BR', { timezone: 'UTC' })}</p>
+        <p> Data da Publicação {new Date(postagem.dataPublicacao).toLocaleString("pt-BR", { timeZone: "UTC" })}</p>
       </CardFooter>
       
     </Card>
