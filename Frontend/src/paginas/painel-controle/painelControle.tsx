@@ -1,25 +1,18 @@
-import { useEffect, useState } from "react";
-import { MockStore } from "../../dados/MockStore.ts";
-import { getParque, getTipo } from "../../dados/Enumerations.ts"
-import PostagemForm from "./cadastroPostagem.jsx";
+import { useState } from "react";
+import { getParque, getTipo } from "../../dados/Enumerations";
+import type { PostagemDto } from "@/services/postagem.service";
+import { useDeletePostagem, usePostagensAdmin } from "@/api/useAdminPostagem";
+import PostagemForm from "./cadastroPostagem";
 
 
 export default function Painel() {
 
-  //variaveis modal
+  // Variaveis do modal
   const [modalAberto, setModalAberto] = useState(false);
-  const [postagemSelecionada, setPostagemSelecionada] = useState(null);
-
-  //dados mock
-  const store = MockStore.getInstance();
-
-  const [postagens, setPostagens] = useState([]);
-
-  useEffect(() => {
-    setPostagens(store.getTodasPostagens());
-  }, [setPostagens]);
-
-
+  const [postagemSelecionada, setPostagemSelecionada] = useState<PostagemDto | null>(null);
+  const { data: resultado } = usePostagensAdmin();
+  const deletePostagemMutation = useDeletePostagem();
+  const postagens = resultado?.itens ?? [];
 
   // funcoes botoes
   // novo cadastro
@@ -34,8 +27,16 @@ export default function Painel() {
     setModalAberto(true);
   }
 
-  //seleciona linha
-  function selecionarLinha(p) {
+  // Exclui a postagem selecionada
+  async function excluirRegistro() {
+    if (!postagemSelecionada) return;
+
+    await deletePostagemMutation.mutateAsync(postagemSelecionada.id);
+    setPostagemSelecionada(null);
+  }
+
+  // Seleciona linha
+  function selecionarLinha(p: PostagemDto) {
     setPostagemSelecionada(p);
   }
 
@@ -55,7 +56,7 @@ export default function Painel() {
             <button className="btn-acao bg-[#B5C6A6] text-[#1E4636] hover:bg-[#a5b996]" onClick={editarRegistro}>
               EDITAR
             </button>
-            <button className="btn-acao bg-red-600 hover:bg-red-700">
+            <button className="btn-acao bg-red-600 hover:bg-red-700" onClick={excluirRegistro}>
               EXCLUIR
             </button>
           </div>
@@ -105,11 +106,11 @@ export default function Painel() {
       {modalAberto && (
         <div className="fixed inset-0 bg-black/30 flex items-center justify-center">
           <PostagemForm
-            postagem={postagemSelecionada}     // null = novo, objeto = editar
+            postagem={postagemSelecionada}
             onCancel={() => setModalAberto(false)}
             onSaved={() => {
               setModalAberto(false);
-              console.log("Salvou, atualizar lista");
+              setPostagemSelecionada(null);
             }}
           />
         </div>

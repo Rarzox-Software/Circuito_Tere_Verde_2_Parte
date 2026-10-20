@@ -1,19 +1,37 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { AuthService, AuthDto } from "@/services/auth.service";
+import { AuthService, type AuthDto } from "@/services/auth.service";
 
 const authService = new AuthService();
 
 // Hook para logar
 export function useLogin() {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: (credenciais: AuthDto) => authService.login(credenciais),
     onSuccess: (data) => {
-      // teste
-      console.log("Login efetuado com sucesso!", data);
+      queryClient.setQueryData(["usuario-atual"], data);
     },
-    onError: (error) => {
-      // Tratamento de erro
-      console.error("Falha no login:", error.message);
+  });
+}
+
+// Hook para consultar a sessao atual
+export function useUsuarioAtual() {
+  return useQuery({
+    queryKey: ["usuario-atual"],
+    queryFn: () => authService.me(),
+    retry: false,
+  });
+}
+
+// Hook para encerrar a sessao
+export function useLogout() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: () => authService.logout(),
+    onSuccess: () => {
+      queryClient.removeQueries({ queryKey: ["usuario-atual"] });
     },
   });
 }

@@ -1,53 +1,48 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import BotaoParque from "../botaoParque.jsx";
+import BotaoParque from "../botaoParque";
 
 import LogoSerraOrgaos from "@/assets/logo-serra-orgaos.png";
 import LogoMontanhasTeresopolis from "@/assets/logo-montanhas-teresopolis.png";
 import LogoTresPicos from "@/assets/logo-tres-picos.png";
 
-import { PostagemDto } from "@/services/postagem.service";
-import { usePostagens } from "@/api/usePostagem";
+import type { FiltroPostagens } from "@/services/postagem.service";
 
 export default function FiltrosListagem({
-  retornoFiltro,
+  onFiltroAlterado,
 }: {
-  retornoFiltro: (postagens: PostagemDto[]) => void;
+  onFiltroAlterado: (filtro: Omit<FiltroPostagens, "pagina">) => void;
 }) {
   const [filtroSelecionado, setFiltroSelecionado] = useState(0);
   const [parqueSelecionado, setParqueSelecionado] = useState(0);
 
-  const { data: postagens, isLoading } = usePostagens(parqueSelecionado);
-
   const botoes = [
-    "TODOS",
-    "TRILHAS",
-    "CACHOEIRAS",
-    "BIODIVERSIDADE",
-    "EVENTOS",
-    "NOVIDADES",
-    "ATRAÇÕES",
-    "SOBRE",
+    { label: "TODOS", codigo: undefined },
+    { label: "TRILHAS", codigo: "TRILHAS" },
+    { label: "CACHOEIRAS", codigo: "CACHOEIRAS" },
+    { label: "BIODIVERSIDADE", codigo: "BIODIVERSIDADE" },
+    { label: "EVENTOS", codigo: "EVENTOS" },
+    { label: "NOVIDADES", codigo: "NOVIDADES" },
+    { label: "ATRAÇÕES", codigo: "ATRAÇÕES" },
+    { label: "SOBRE", codigo: "SOBRE" },
   ];
 
   const parques = [
-    { label: "Parque Nacional da Serra dos Órgãos", logo: LogoSerraOrgaos },
+    { codigo: "PNSO", label: "Parque Nacional da Serra dos Órgãos", logo: LogoSerraOrgaos },
     {
+      codigo: "PNMMT",
       label: "Parque Natural Municipal Montanhas de Teresópolis",
       logo: LogoMontanhasTeresopolis,
     },
-    { label: "Parque Estadual dos Três Picos", logo: LogoTresPicos },
+    { codigo: "PETP", label: "Parque Estadual dos Três Picos", logo: LogoTresPicos },
   ];
 
   useEffect(() => {
-    //retornoFiltro(store.getPostagensPorParqueETipo(parqueSelecionado, filtroSelecionado - 1));
-    retornoFiltro(
-      store.getPostagensPorParqueETipo(
-        parqueSelecionado,
-        filtroSelecionado - 1,
-      ),
-    );
-  }, [filtroSelecionado, parqueSelecionado, retornoFiltro]);
+    onFiltroAlterado({
+      parque: parques[parqueSelecionado].codigo,
+      tipo: botoes[filtroSelecionado].codigo,
+    });
+  }, [filtroSelecionado, onFiltroAlterado, parqueSelecionado]);
 
   return (
     <>
@@ -63,7 +58,7 @@ export default function FiltrosListagem({
         ))}
       </div>
       <div className="p-2 rounded-md bg-secondary flex flex-wrap justify-center gap-2 space-between w-full">
-        {botoes.map((label, index) => (
+        {botoes.map(({ label }, index) => (
           <Button
             key={index}
             onClick={() => setFiltroSelecionado(index)}

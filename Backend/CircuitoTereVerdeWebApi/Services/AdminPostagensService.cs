@@ -38,18 +38,15 @@ public sealed class AdminPostagensService
         string usuarioId,
         CancellationToken cancellationToken = default)
     {
-        byte[] conteudoFoto = null;
-        string tipoConteudoFoto = null;
+        FotoPostagemRegras.ValidarObrigatoria(!string.IsNullOrWhiteSpace(dados.Foto));
+        var partes = dados.Foto.Split(',', 2);
+        if (partes.Length != 2)
+        {
+            throw new ErroDominioException("Imagem da postagem invalida.");
+        }
 
-        var partes = dados.Foto.Split(',');
-
-        // Extrai o tipo do conteúdo (ex: "image/png")
-        tipoConteudoFoto = partes[0].Replace("data:", "").Replace(";base64", "");
-
-        // Converte a string de dados pura em array de bytes
-        conteudoFoto = Convert.FromBase64String(partes[1]);
-
-        FotoPostagemRegras.ValidarObrigatoria(dados.Foto is not null);
+        var tipoConteudoFoto = partes[0].Replace("data:", "").Replace(";base64", "");
+        var conteudoFoto = Convert.FromBase64String(partes[1]);
 
         return await _postagemService.CriarAsync(
             dados, conteudoFoto, tipoConteudoFoto, usuarioId, cancellationToken);

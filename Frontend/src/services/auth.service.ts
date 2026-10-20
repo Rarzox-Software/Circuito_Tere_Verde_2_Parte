@@ -6,32 +6,39 @@ interface AuthDto {
   senha: string;
 }
 
-// Criacao do Serviço
+interface UsuarioAutenticadoDto {
+  id: string;
+  nome: string;
+  email: string;
+  perfis: string[];
+}
+
+// Criacao do servico
 class AuthService extends BaseCrudService<AuthDto> {
   constructor() {
     super("/auth");
   }
 
-  async login(credenciais: AuthDto): Promise<AuthDto> {
+  async login(credenciais: AuthDto): Promise<UsuarioAutenticadoDto> {
     // Monta a URL e corpo
-    return this.request<AuthDto>(`${this.baseUrl}/login`, {
+    return this.request<UsuarioAutenticadoDto>(`${this.baseUrl}/login`, {
       method: "POST",
       body: JSON.stringify(credenciais),
     });
   }
 
-  async logout(): Promise<AuthDto> {
+  async logout(): Promise<void> {
     // Monta a URL
-    return this.request<AuthDto>(`${this.baseUrl}/logout`, {
+    return this.request<void>(`${this.baseUrl}/logout`, {
       method: "POST",
     });
   }
 
-  async me(): Promise<AuthDto> {
+  async me(): Promise<UsuarioAutenticadoDto> {
     // Monta a URL
-    return this.request<AuthDto>(`${this.baseUrl}/me`, {
+    return this.request<UsuarioAutenticadoDto>(`${this.baseUrl}/me`, {
       method: "GET",
     });
   }
 }
-export { type AuthDto, AuthService };
+export { type AuthDto, type UsuarioAutenticadoDto, AuthService };

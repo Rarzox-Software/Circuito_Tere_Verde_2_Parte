@@ -1,4 +1,3 @@
-import React from "react"
 import Carousel from "./carousel"
 import Listagem from "./listagem"
 import Container from "@/components/container"
