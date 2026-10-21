@@ -42,8 +42,8 @@ As telas foram planejadas no Figma e serviram como referência para a construç�
 
 ## Requisitos do Frontend
 
-Os requisitos funcionais e não funcionais do Frontend estão disponíveis em [planilha de requisitos](../requisitos/Requisitos_Frontend.xlsx).
-
+🔗 [Clique aqui para acessar a planilha de requisitos](https://docs.google.com/spreadsheets/d/17M4lhHh-zplAb1LycOdzhCNI1cL9nvuHoTDNzm8jUvw/edit?usp=sharing)
+- [Baixar Planilha](https://raw.githubusercontent.com/Rarzox-Software/Circuito_Tere_Verde/main/requisitos/Circuito%20Tere%20Verde%20Requisitos.xlsx)
 
 ## Tecnologias Utilizadas
 
