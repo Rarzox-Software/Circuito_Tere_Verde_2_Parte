@@ -2,9 +2,13 @@
 
 # Esta fase é usada durante a execução no VS no modo rápido (Padrão para a configuração de Depuração)
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
-USER $APP_UID
+USER root
 WORKDIR /app
+# Mantém o banco fora dos arquivos publicados e permite escrita pelo usuário da aplicação.
+RUN mkdir -p /data && chown $APP_UID /data
+USER $APP_UID
 EXPOSE 8080
+EXPOSE 8081
 
 
 # Esta fase é usada para compilar o projeto de serviço

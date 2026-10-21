@@ -142,6 +142,27 @@ public sealed class PrincipalRotasTests
     }
 
     [Fact]
+    public async Task CorsPermiteOFrontendLocalConfigurado()
+    {
+        using var cliente = _fixture.Factory.CreateClient();
+
+        // O preflight confirma que o frontend publicado em localhost pode chamar a API com cookie.
+        using var preflight = new HttpRequestMessage(HttpMethod.Options, "/api/parques");
+        preflight.Headers.Add("Origin", "http://localhost");
+        preflight.Headers.Add("Access-Control-Request-Method", "GET");
+        using var permitido = await cliente.SendAsync(preflight);
+        Assert.True(permitido.IsSuccessStatusCode);
+        Assert.Equal("http://localhost", permitido.Headers.GetValues("Access-Control-Allow-Origin").Single());
+        Assert.Equal("true", permitido.Headers.GetValues("Access-Control-Allow-Credentials").Single());
+
+        // Uma origem não cadastrada não recebe os cabeçalhos que liberam a resposta no navegador.
+        using var bloqueada = new HttpRequestMessage(HttpMethod.Get, "/api/parques");
+        bloqueada.Headers.Add("Origin", "http://origem-nao-permitida.test");
+        using var respostaBloqueada = await cliente.SendAsync(bloqueada);
+        Assert.False(respostaBloqueada.Headers.Contains("Access-Control-Allow-Origin"));
+    }
+
+    [Fact]
     public async Task SwaggerAbreEDocumentaUploadDeFoto()
     {
         using var cliente = _fixture.Factory.CreateClient();
@@ -153,15 +174,20 @@ public sealed class PrincipalRotasTests
         Assert.True(resposta.IsSuccessStatusCode, await resposta.Content.ReadAsStringAsync());
 
         using var documento = JsonDocument.Parse(await resposta.Content.ReadAsStringAsync());
-        // As duas operações devem descrever o campo foto como um arquivo multipart.
         var operacoes = documento.RootElement.GetProperty("paths").GetProperty("/api/admin/postagens");
-        foreach (var metodo in new[] { "post", "put" })
-        {
-            var formulario = operacoes.GetProperty(metodo).GetProperty("requestBody")
-                .GetProperty("content").GetProperty("multipart/form-data");
-            var foto = formulario.GetProperty("schema").GetProperty("properties").GetProperty("foto");
-            Assert.Equal("binary", foto.GetProperty("format").GetString());
-        }
+        // A criação recebe o DTO JSON, incluindo a foto já preparada em Base64 pelo frontend.
+        var criacao = operacoes.GetProperty("post").GetProperty("requestBody")
+            .GetProperty("content").GetProperty("application/json");
+        Assert.Equal("#/components/schemas/SalvarPostagemDto", criacao.GetProperty("schema").GetProperty("$ref").GetString());
+        var contrato = documento.RootElement.GetProperty("components").GetProperty("schemas")
+            .GetProperty("SalvarPostagemDto");
+        Assert.Equal("string", contrato.GetProperty("properties").GetProperty("foto").GetProperty("type").GetString());
+
+        // A edição mantém multipart para permitir que uma nova foto seja enviada opcionalmente.
+        var edicao = operacoes.GetProperty("put").GetProperty("requestBody")
+            .GetProperty("content").GetProperty("multipart/form-data");
+        var foto = edicao.GetProperty("schema").GetProperty("properties").GetProperty("foto");
+        Assert.Equal("binary", foto.GetProperty("format").GetString());
 
         // O ID de edição deve estar documentado como cabeçalho, conforme o contrato da API.
         var parametrosEdicao = operacoes.GetProperty("put").GetProperty("parameters").EnumerateArray();
@@ -175,9 +201,9 @@ public sealed class PrincipalRotasTests
 
     private async Task<int> CriarPostagemDeTesteAsync(HttpClient cliente, string tipo, DateOnly inicio, DateOnly? fim)
     {
-        using var formulario = ApiTesteHelpers.CriarFormularioPostagem(
+        using var conteudo = ApiTesteHelpers.CriarConteudoPostagem(
             $"Teste da principal {Guid.NewGuid():N}", "Postagem criada pelo teste.", inicio, fim, [1, 2, 3], tipo: tipo);
-        using var resposta = await cliente.PostAsync("/api/admin/postagens", formulario);
+        using var resposta = await cliente.PostAsync("/api/admin/postagens", conteudo);
         Assert.Equal(HttpStatusCode.Created, resposta.StatusCode);
         using var postagem = JsonDocument.Parse(await resposta.Content.ReadAsStringAsync());
         var id = postagem.RootElement.GetProperty("id").GetInt32();

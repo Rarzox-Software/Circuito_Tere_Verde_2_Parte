@@ -19,6 +19,7 @@ Apresentamos o  **Circuito Terê Verde**, um projeto desenvolvido para promover 
 - [Público Alvo](#público-alvo)
 - [Dores do público alvo](#dores-do-público-alvo)
 - [Benefícios](#Benefícios)
+- [Como executar com Docker](#como-executar-com-docker)
 
 
 ## O Desafio
@@ -55,6 +56,33 @@ O MVP do Circuito Terê Verde consiste em uma plataforma digital mínima e funci
 Você pode visualizar os slides de apresentação do MVP no link abaixo:
 
 [Slides de Apresentação](https://gtiunifeso-my.sharepoint.com/:p:/g/personal/nauanlima_unifeso_com_vc/IQBJe6kAHZOgTawivyfIlXn0AfEWFrAa0uvdk4LgmooNpIY?e=fCOpgB)
+
+## Como executar com Docker
+
+### Backend
+
+Com o Docker Desktop aberto, execute:
+
+```powershell
+docker run -d --name circuito-tereverde-api -p 8080:8080 -v circuito-tereverde-dados:/data -e ASPNETCORE_ENVIRONMENT=Development rarzox/circuitotereverdewebapi:beta-teste
+```
+
+A API e o Swagger estarão disponíveis em:
+
+```text
+http://localhost:8080/swagger
+```
+
+### Frontend
+
+O comando do site será incluído nesta seção quando a imagem do frontend estiver publicada.
+
+Após iniciar o backend e o frontend, entre como administrador de desenvolvimento com:
+
+```text
+E-mail: admin@circuitotereverde.test
+Senha: AdminTeste123!
+```
 
 
 ## Frontend

@@ -32,7 +32,8 @@ public sealed class InicializacaoBancoTests
         // A fixture já iniciou a API; ela precisa ter aplicado a Inicial no SQLite configurado.
         Assert.Equal("Microsoft.EntityFrameworkCore.Sqlite", contexto.Database.ProviderName);
         var migracoes = await contexto.Database.GetAppliedMigrationsAsync();
-        Assert.EndsWith("_Inicial", Assert.Single(migracoes));
+        // A Inicial existe e qualquer migração criada depois dela também é aplicada na partida.
+        Assert.Contains(migracoes, migracao => migracao.EndsWith("_Inicial"));
         Assert.Empty(await contexto.Database.GetPendingMigrationsAsync());
         Assert.False(contexto.Database.HasPendingModelChanges());
 

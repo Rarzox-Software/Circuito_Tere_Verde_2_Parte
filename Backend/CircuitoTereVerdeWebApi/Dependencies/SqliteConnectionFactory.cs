@@ -1,7 +1,8 @@
 using Microsoft.Data.Sqlite;
 
-namespace CircuitoTereVerde.Core.Infra.Connection;
+namespace CircuitoTereVerdeWebApi.Dependencies;
 
+// Prepara o caminho do arquivo SQLite antes do contexto ser registrado na API.
 public static class SqliteConnectionFactory
 {
     public static string Normalizar(string connectionString, string contentRoot)

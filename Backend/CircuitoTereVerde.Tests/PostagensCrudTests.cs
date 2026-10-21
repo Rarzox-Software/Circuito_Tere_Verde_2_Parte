@@ -1,5 +1,4 @@
 using System.Net;
-using System.Net.Http.Headers;
 using System.Text.Json;
 using CircuitoTereVerde.Core.Domain;
 using CircuitoTereVerde.Core.Infra.Context;
@@ -31,8 +30,8 @@ public sealed class PostagensCrudTests
         var contexto = escopo.ServiceProvider.GetRequiredService<CircuitoTereVerdeDbContext>();
 
         var titulo = $"Postagem de teste {_fixture.Factory.EmailAdministrador}";
-        var dataInicio = DateOnly.FromDateTime(DateTime.UtcNow).ToString("yyyy-MM-dd");
-        var dataFim = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(5)).ToString("yyyy-MM-dd");
+        var dataInicio = DateOnly.FromDateTime(DateTime.UtcNow);
+        var dataFim = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(5));
         var bytesFoto = new byte[] { 137, 80, 78, 71, 13, 10, 26, 10, 1, 2, 3, 4 };
         int? idCriado = null;
 
@@ -47,19 +46,10 @@ public sealed class PostagensCrudTests
 
         try
         {
-            // O cadastro envia a foto em multipart e recebe a imagem no JSON da postagem.
-            using var formulario = new MultipartFormDataContent();
-            formulario.Add(new StringContent(CodigosCatalogo.Parques.Pnso), "Parque");
-            formulario.Add(new StringContent(CodigosCatalogo.Tipos.Eventos), "Tipo");
-            formulario.Add(new StringContent(titulo), "Titulo");
-            formulario.Add(new StringContent("Descrição criada pelo teste de integração."), "Descricao");
-            formulario.Add(new StringContent(dataInicio), "DataInicio");
-            formulario.Add(new StringContent(dataFim), "DataFim");
-            var conteudoFoto = new ByteArrayContent(bytesFoto);
-            conteudoFoto.Headers.ContentType = new MediaTypeHeaderValue("image/png");
-            formulario.Add(conteudoFoto, "foto", "teste.png");
-
-            using var criacao = await cliente.PostAsync("/api/admin/postagens", formulario);
+            // O cadastro envia o contrato JSON, com a foto já preparada em Base64 pelo frontend.
+            using var conteudo = ApiTesteHelpers.CriarConteudoPostagem(
+                titulo, "Descrição criada pelo teste de integração.", dataInicio, dataFim, bytesFoto);
+            using var criacao = await cliente.PostAsync("/api/admin/postagens", conteudo);
             Assert.Equal(HttpStatusCode.Created, criacao.StatusCode);
             using var criada = JsonDocument.Parse(await criacao.Content.ReadAsStringAsync());
             idCriado = criada.RootElement.GetProperty("id").GetInt32();
@@ -95,8 +85,8 @@ public sealed class PostagensCrudTests
             formularioAtualizacao.Add(new StringContent(CodigosCatalogo.Tipos.Eventos), "Tipo");
             formularioAtualizacao.Add(new StringContent($"{titulo} editada"), "Titulo");
             formularioAtualizacao.Add(new StringContent("Descrição atualizada pelo teste."), "Descricao");
-            formularioAtualizacao.Add(new StringContent(dataInicio), "DataInicio");
-            formularioAtualizacao.Add(new StringContent(dataFim), "DataFim");
+            formularioAtualizacao.Add(new StringContent(dataInicio.ToString("yyyy-MM-dd")), "DataInicio");
+            formularioAtualizacao.Add(new StringContent(dataFim.ToString("yyyy-MM-dd")), "DataFim");
 
             using var atualizacao = await ApiTesteHelpers.EnviarComIdAsync(
                 cliente, HttpMethod.Put, "/api/admin/postagens", idCriado.Value, formularioAtualizacao);
@@ -109,7 +99,7 @@ public sealed class PostagensCrudTests
             var novosBytes = new byte[] { 82, 73, 70, 70, 10, 20, 30, 40 };
             using var formularioFoto = ApiTesteHelpers.CriarFormularioPostagem(
                 $"{titulo} editada", "Descrição com nova foto.",
-                DateOnly.Parse(dataInicio), DateOnly.Parse(dataFim), novosBytes, tipoFoto: "image/webp");
+                dataInicio, dataFim, novosBytes, tipoFoto: "image/webp");
             using var trocaFoto = await ApiTesteHelpers.EnviarComIdAsync(
                 cliente, HttpMethod.Put, "/api/admin/postagens", idCriado.Value, formularioFoto);
             Assert.Equal(HttpStatusCode.OK, trocaFoto.StatusCode);
@@ -123,15 +113,15 @@ public sealed class PostagensCrudTests
                 .Select(item => item.FotoPostagemId).SingleAsync());
 
             // Ao encerrar o período, a postagem sai da principal, mas continua disponível para o administrador.
-            var dataInicioEncerrada = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-2)).ToString("yyyy-MM-dd");
-            var dataFimEncerrada = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-1)).ToString("yyyy-MM-dd");
+            var dataInicioEncerrada = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-2));
+            var dataFimEncerrada = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-1));
             using var formularioEncerrado = new MultipartFormDataContent();
             formularioEncerrado.Add(new StringContent(CodigosCatalogo.Parques.Pnso), "Parque");
             formularioEncerrado.Add(new StringContent(CodigosCatalogo.Tipos.Eventos), "Tipo");
             formularioEncerrado.Add(new StringContent($"{titulo} encerrada"), "Titulo");
             formularioEncerrado.Add(new StringContent("Evento encerrado pelo teste."), "Descricao");
-            formularioEncerrado.Add(new StringContent(dataInicioEncerrada), "DataInicio");
-            formularioEncerrado.Add(new StringContent(dataFimEncerrada), "DataFim");
+            formularioEncerrado.Add(new StringContent(dataInicioEncerrada.ToString("yyyy-MM-dd")), "DataInicio");
+            formularioEncerrado.Add(new StringContent(dataFimEncerrada.ToString("yyyy-MM-dd")), "DataFim");
 
             using var encerramento = await ApiTesteHelpers.EnviarComIdAsync(
                 cliente, HttpMethod.Put, "/api/admin/postagens", idCriado.Value, formularioEncerrado);
@@ -235,10 +225,12 @@ public sealed class PostagensCrudTests
             case "foto_acima_limite": foto = new byte[5 * 1024 * 1024 + 1]; break;
         }
 
-        using var formulario = ApiTesteHelpers.CriarFormularioPostagem(
+        using var conteudo = ApiTesteHelpers.CriarConteudoPostagem(
             titulo, descricao, inicio, fim, foto, parque, tipo, tipoFoto);
-        using var resposta = await cliente.PostAsync("/api/admin/postagens", formulario);
+        using var resposta = await cliente.PostAsync("/api/admin/postagens", conteudo);
         Assert.Equal(HttpStatusCode.BadRequest, resposta.StatusCode);
+        using var problema = JsonDocument.Parse(await resposta.Content.ReadAsStringAsync());
+        Assert.False(string.IsNullOrWhiteSpace(problema.RootElement.GetProperty("title").GetString()));
 
         // Uma entrada inválida não pode deixar uma postagem ou uma foto parcial no SQLite.
         Assert.Equal(totalPostagens, await contexto.Postagens.CountAsync());

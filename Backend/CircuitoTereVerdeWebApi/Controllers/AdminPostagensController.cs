@@ -44,7 +44,8 @@ public sealed class AdminPostagensController : ControllerBase
     #region Cadastro e edição
 
     [HttpPost]
-    [RequestSizeLimit(5_300_000)]
+    // A foto chega em Base64, então a requisição comporta até 5 MB após a decodificação.
+    [RequestSizeLimit(7_100_000)]
     public async Task<IActionResult> Criar([FromBody] SalvarPostagemDto dados, CancellationToken cancellationToken)
     {
         var usuarioId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty;

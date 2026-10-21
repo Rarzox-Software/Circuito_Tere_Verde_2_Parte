@@ -52,9 +52,36 @@ internal static class ApiTesteHelpers
 
     #endregion
 
-    #region Formulário enviado pelo frontend
+    #region Contratos enviados pelo frontend
 
-    // Monta os mesmos campos multipart que o frontend envia ao gravar uma postagem.
+    // Monta o JSON da criação, com a foto já convertida pelo frontend para data URI Base64.
+    public static JsonContent CriarConteudoPostagem(
+        string titulo,
+        string descricao,
+        DateOnly? dataInicio,
+        DateOnly? dataFim,
+        byte[]? foto,
+        string parque = "PNSO",
+        string tipo = "EVENTOS",
+        string tipoFoto = "image/png")
+    {
+        var fotoDataUri = foto is null
+            ? string.Empty
+            : $"data:{tipoFoto};base64,{Convert.ToBase64String(foto)}";
+
+        return JsonContent.Create(new
+        {
+            parque,
+            tipo,
+            titulo,
+            descricao,
+            dataInicio,
+            dataFim,
+            foto = fotoDataUri
+        });
+    }
+
+    // Monta o formulário multipart usado somente na edição com uma nova foto.
     public static MultipartFormDataContent CriarFormularioPostagem(
         string titulo,
         string descricao,

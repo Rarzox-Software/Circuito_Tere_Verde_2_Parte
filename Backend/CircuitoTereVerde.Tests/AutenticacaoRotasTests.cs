@@ -4,6 +4,7 @@ using System.Text.Json;
 using CircuitoTereVerde.Core.Infra.Context;
 using CircuitoTereVerde.Core.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -191,6 +192,30 @@ public sealed class AutenticacaoRotasTests
             senha = _fixture.Factory.SenhaAdministrador
         });
         Assert.Equal(HttpStatusCode.Unauthorized, resposta.StatusCode);
+    }
+
+    [Fact]
+    public async Task LoginHttpLocalCriaCookieSemSecure()
+    {
+        // A apresentação local usa HTTP; neste caso o cookie precisa ser aceito pelo navegador.
+        using var cliente = _fixture.Factory.CreateClient(new WebApplicationFactoryClientOptions
+        {
+            BaseAddress = new Uri("http://localhost")
+        });
+
+        using var login = await cliente.PostAsJsonAsync("/api/auth/login", new
+        {
+            email = _fixture.Factory.EmailAdministrador,
+            senha = _fixture.Factory.SenhaAdministrador
+        });
+
+        Assert.Equal(HttpStatusCode.OK, login.StatusCode);
+        Assert.DoesNotContain(login.Headers.GetValues("Set-Cookie"), valor =>
+            valor.Contains("secure", StringComparison.OrdinalIgnoreCase));
+
+        // A mesma sessão HTTP local deve acessar a rota protegida normalmente.
+        using var sessao = await cliente.GetAsync("/api/auth/me");
+        Assert.Equal(HttpStatusCode.OK, sessao.StatusCode);
     }
 
     #endregion

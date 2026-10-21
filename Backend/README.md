@@ -48,16 +48,51 @@ Os filtros e a paginação da listagem, assim como os IDs usados nas consultas e
 - **Entity Framework Core** — comunicação entre a aplicação e o banco de dados.
 - **SQLite** — armazenamento local de parques, postagens, imagens e contas administrativas.
 - **ASP.NET Identity** — autenticação e controle de acesso dos administradores.
+- **Swagger** — documentação e teste dos endpoints da API.
+
+## Estrutura
+
+```text
+Backend/
+├── CircuitoTereVerde.Core/                  # Regras e estrutura central da aplicação.
+│   ├── Contracts/                           # DTOs usados nos contratos da API.
+│   ├── Domain/                              # Regras de negócio e exceções de domínio.
+│   ├── Infra/                               # Persistência e acesso aos dados.
+│   │   ├── Context/                         # Contexto do Entity Framework Core.
+│   │   ├── Migrations/                      # Histórico de criação e evolução do banco.
+│   │   ├── Repositories/                    # Operações de acesso às entidades.
+│   │   └── UnitOfWork/                      # Coordena repositórios e salvamento.
+│   ├── Models/                              # Entidades mapeadas para as tabelas do banco.
+│   └── Services/                            # Orquestra as regras e operações da aplicação.
+│
+└── CircuitoTereVerdeWebApi/                 # Projeto que expõe a API HTTP.
+    ├── Controllers/                         # Define os endpoints e recebe as requisições.
+    ├── Dependencies/                        # Configura conexão, autenticação, CORS e serviços.
+    ├── Handlers/                            # Trata erros globais e gera respostas da API.
+    └── Services/                            # Adapta requisições da API para os serviços do Core.
+```
 
 ## Como executar
 
-É necessário instalar o [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0).
-.
-.
-.
-.
-.
+O projeto pode ser executado por HTTP, Docker ou IIS Express. Para o desenvolvimento, recomendamos o **IIS Express**, pois ele já inicia a API com HTTPS.
 
+1. Baixe o código-fonte do projeto.
+2. Abra a solução `Backend/CircuitoTereVerdeWebApi.slnx` no Visual Studio.
+3. Na lista de execução no topo do Visual Studio, escolha uma opção:
+   - **IIS Express** — opção recomendada para desenvolver e testar com HTTPS.
+   - **CTVWebApi** — executa a API diretamente pelo perfil HTTP do projeto.
+   - **Docker** — executa a API em um container.
+4. Execute o projeto pelo Visual Studio.
+
+Com o IIS Express, o Swagger será aberto em:
+
+```text
+https://localhost:44390/swagger
+```
+
+Na primeira execução, a API cria o banco SQLite, aplica as migrações pendentes, cadastra os parques, os tipos de postagem e o administrador de desenvolvimento.
+
+As credenciais do administrador de desenvolvimento estão em `appsettings.Development.json`.
 
 ## Requisitos e materiais
 

@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <UserSecretsId>circuitotereverde-webapi-7f2d8c96-3c21-4b01-ae07-51e4d69f8a40</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

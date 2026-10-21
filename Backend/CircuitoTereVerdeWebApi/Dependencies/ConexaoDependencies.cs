@@ -1,4 +1,3 @@
-using CircuitoTereVerde.Core.Infra.Connection;
 using CircuitoTereVerde.Core.Infra.Context;
 using Microsoft.EntityFrameworkCore;
 

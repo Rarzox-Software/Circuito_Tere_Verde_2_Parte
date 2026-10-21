@@ -27,7 +27,8 @@ public static class AutenticacaoDependencies
         {
             options.Cookie.Name = "CircuitoTereVerde.Auth";
             options.Cookie.HttpOnly = true;
-            options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+            // Em HTTP local funciona sem Secure; atrás do Nginx HTTPS, usa Secure automaticamente.
+            options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
             options.Cookie.SameSite = SameSiteMode.Strict;
             options.Cookie.Path = "/";
             options.ExpireTimeSpan = TimeSpan.FromHours(8);

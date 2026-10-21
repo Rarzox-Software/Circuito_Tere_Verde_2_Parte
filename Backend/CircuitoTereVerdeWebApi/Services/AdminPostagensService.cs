@@ -38,18 +38,10 @@ public sealed class AdminPostagensService
         string usuarioId,
         CancellationToken cancellationToken = default)
     {
-        FotoPostagemRegras.ValidarObrigatoria(!string.IsNullOrWhiteSpace(dados.Foto));
-        var partes = dados.Foto.Split(',', 2);
-        if (partes.Length != 2)
-        {
-            throw new ErroDominioException("Imagem da postagem invalida.");
-        }
-
-        var tipoConteudoFoto = partes[0].Replace("data:", "").Replace(";base64", "");
-        var conteudoFoto = Convert.FromBase64String(partes[1]);
+        var foto = PrepararFotoDoContrato(dados.Foto);
 
         return await _postagemService.CriarAsync(
-            dados, conteudoFoto, tipoConteudoFoto, usuarioId, cancellationToken);
+            dados, foto.Conteudo, foto.TipoConteudo, usuarioId, cancellationToken);
     }
 
     public async Task<PostagemDto> AtualizarAsync(
@@ -79,6 +71,40 @@ public sealed class AdminPostagensService
     #endregion
 
     #region Preparação da foto
+
+    // Converte a foto já preparada pelo frontend no formato data:image/...;base64,... .
+    private static FotoPostagemDto PrepararFotoDoContrato(string foto)
+    {
+        FotoPostagemRegras.ValidarObrigatoria(!string.IsNullOrWhiteSpace(foto));
+
+        const string marcadorBase64 = ";base64,";
+        if (!foto.StartsWith("data:", StringComparison.OrdinalIgnoreCase))
+        {
+            throw new ErroDominioException("Imagem da postagem invalida.");
+        }
+
+        var indiceMarcador = foto.IndexOf(marcadorBase64, StringComparison.OrdinalIgnoreCase);
+        if (indiceMarcador <= "data:".Length)
+        {
+            throw new ErroDominioException("Imagem da postagem invalida.");
+        }
+
+        var tipoConteudo = foto["data:".Length..indiceMarcador];
+        var base64 = foto[(indiceMarcador + marcadorBase64.Length)..];
+        byte[] conteudo;
+
+        try
+        {
+            conteudo = Convert.FromBase64String(base64);
+        }
+        catch (FormatException)
+        {
+            throw new ErroDominioException("Imagem da postagem invalida.");
+        }
+
+        var tipoValidado = FotoPostagemRegras.ValidarEObterTipo(conteudo.Length, tipoConteudo);
+        return new FotoPostagemDto(conteudo, tipoValidado);
+    }
 
     private static async Task<FotoPostagemDto> PrepararFotoAsync(
         IFormFile arquivoFoto,
