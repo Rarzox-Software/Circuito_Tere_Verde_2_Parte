@@ -29,7 +29,13 @@ export default function Painel() {
 
   // Exclui a postagem selecionada
   async function excluirRegistro() {
-    if (!postagemSelecionada) return;
+    if (!postagemSelecionada || deletePostagemMutation.isPending) return;
+
+    const exclusaoConfirmada = window.confirm(
+      "Tem certeza que deseja excluir esta postagem? Esta ação não poderá ser desfeita.",
+    );
+
+    if (!exclusaoConfirmada) return;
 
     await deletePostagemMutation.mutateAsync(postagemSelecionada.id);
     setPostagemSelecionada(null);
@@ -53,10 +59,18 @@ export default function Painel() {
             <button className="btn-acao bg-[#2E5A47] hover:bg-[#244c3c]" onClick={novoRegistro}>
               NOVO
             </button>
-            <button className="btn-acao bg-[#B5C6A6] text-[#1E4636] hover:bg-[#a5b996]" onClick={editarRegistro}>
+            <button
+              className="btn-acao bg-[#B5C6A6] text-[#1E4636] hover:bg-[#a5b996] disabled:cursor-not-allowed disabled:opacity-50"
+              disabled={!postagemSelecionada}
+              onClick={editarRegistro}
+            >
               EDITAR
             </button>
-            <button className="btn-acao bg-red-600 hover:bg-red-700" onClick={excluirRegistro}>
+            <button
+              className="btn-acao bg-red-600 hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
+              disabled={!postagemSelecionada || deletePostagemMutation.isPending}
+              onClick={excluirRegistro}
+            >
               EXCLUIR
             </button>
           </div>

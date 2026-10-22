@@ -1,6 +1,8 @@
 using CircuitoTereVerde.Core.Contracts;
 using CircuitoTereVerde.Core.Domain;
 using CircuitoTereVerde.Core.Models;
+using System.Globalization;
+using System.Text;
 using UnitOfWork = CircuitoTereVerde.Core.Infra.UnitOfWork.UnitOfWork;
 
 namespace CircuitoTereVerde.Core.Services;
@@ -33,12 +35,14 @@ public sealed class PostagemService
 
         if (!string.IsNullOrWhiteSpace(parque))
         {
-            consulta = consulta.Where(postagem => postagem.Parque.Codigo == parque || postagem.Parque.Nome == parque);
+            var codigoParque = await ResolverCodigoParqueAsync(parque, cancellationToken);
+            consulta = consulta.Where(postagem => postagem.Parque.Codigo == codigoParque);
         }
 
         if (!string.IsNullOrWhiteSpace(tipo))
         {
-            consulta = consulta.Where(postagem => postagem.TipoPostagem.Codigo == tipo || postagem.TipoPostagem.Nome == tipo);
+            var codigoTipo = await ResolverCodigoTipoAsync(tipo, cancellationToken);
+            consulta = consulta.Where(postagem => postagem.TipoPostagem.Codigo == codigoTipo);
         }
         else
         {
@@ -236,19 +240,58 @@ public sealed class PostagemService
             resultado.Itens.Select(Mapear).ToList(), pagina, tamanhoPagina, resultado.Total, totalPaginas);
     }
 
+    private async Task<string> ResolverCodigoParqueAsync(string valor, CancellationToken cancellationToken)
+    {
+        var repositorio = _uow.ParqueRepository;
+        var parques = await repositorio.ListarAsync(repositorio.Consultar(), cancellationToken);
+
+        return parques.FirstOrDefault(parque =>
+                   TextosEquivalentes(parque.Codigo, valor) ||
+                   TextosEquivalentes(parque.Nome, valor))?.Codigo
+               ?? valor.Trim();
+    }
+
+    private async Task<string> ResolverCodigoTipoAsync(string valor, CancellationToken cancellationToken)
+    {
+        var repositorio = _uow.TipoPostagemRepository;
+        var tipos = await repositorio.ListarAsync(repositorio.Consultar(), cancellationToken);
+
+        return tipos.FirstOrDefault(tipo =>
+                   TextosEquivalentes(tipo.Codigo, valor) ||
+                   TextosEquivalentes(tipo.Nome, valor))?.Codigo
+               ?? valor.Trim();
+    }
+
+    private static bool TextosEquivalentes(string primeiroValor, string segundoValor) =>
+        string.Equals(
+            NormalizarTexto(primeiroValor),
+            NormalizarTexto(segundoValor),
+            StringComparison.Ordinal);
+
+    private static string NormalizarTexto(string valor)
+    {
+        var textoDecomposto = valor.Trim().Normalize(NormalizationForm.FormD);
+        var caracteresSemAcento = textoDecomposto.Where(caractere =>
+            CharUnicodeInfo.GetUnicodeCategory(caractere) != UnicodeCategory.NonSpacingMark);
+
+        return new string(caracteresSemAcento.ToArray()).ToUpperInvariant();
+    }
+
     private async Task<(Parque Parque, TipoPostagem Tipo)> ObterCatalogoAsync(
         string codigoParque,
         string codigoTipo,
         CancellationToken cancellationToken)
     {
+        var codigoParqueResolvido = await ResolverCodigoParqueAsync(codigoParque, cancellationToken);
+        var codigoTipoResolvido = await ResolverCodigoTipoAsync(codigoTipo, cancellationToken);
         var repositorioParque = _uow.ParqueRepository;
         var parque = await repositorioParque.PrimeiroOuPadraoAsync(
             repositorioParque.Consultar()
-                .Where(item => item.Codigo == codigoParque || item.Nome == codigoParque), cancellationToken);
+                .Where(item => item.Codigo == codigoParqueResolvido), cancellationToken);
         var repositorioTipo = _uow.TipoPostagemRepository;
         var tipo = await repositorioTipo.PrimeiroOuPadraoAsync(
             repositorioTipo.Consultar()
-                .Where(item => item.Codigo == codigoTipo || item.Nome == codigoTipo), cancellationToken);
+                .Where(item => item.Codigo == codigoTipoResolvido), cancellationToken);
 
         if (parque is null)
         {
