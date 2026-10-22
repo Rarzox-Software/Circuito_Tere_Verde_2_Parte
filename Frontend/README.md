@@ -53,32 +53,34 @@ As telas foram planejadas no Figma e serviram como referência para a construç�
 - **Lucide React** — Utilizado para inserir ícones leves e consistentes em diferentes partes da interface.
 - **Embla Carousel** — Implementado para criar o carrossel de forma simples, fluida e totalmente integrada aos componentes do React.
 
-## Instalação e Uso
+## Como executar
 
-1. Baixe e instale a versão LTS do Node.js em: https://nodejs.org/
- 
-2. Clone o repositório:
-   ```bash
+### Localmente
+
+1. Instale a versão LTS do [Node.js](https://nodejs.org/).
+2. Inicie a API. Para usar HTTP local, siga o comando do backend no [README principal](../README.md#como-executar-com-docker).
+3. Clone o repositório e entre na pasta do frontend:
+
+   ```powershell
    git clone https://github.com/Rarzox-Software/Circuito_Tere_Verde.git
+   cd Circuito_Tere_Verde/Frontend
+   ```
 
-3. Acesse a pasta do Projeto
-   ```bash
-   npm install 
+4. Instale as dependências e inicie o site:
 
-4. Rodar em modo de desenvolvimento
-    ```bash
-    npm run dev
+   ```powershell
+   npm install
+   npm run dev
+   ```
 
-5. Para rodar em produção, deverá utilizar o comando
-    ```bash
-    npm run build
-    
-6. O comando vai gerar uma pasta "dist" e para visualizar, deverá utilizar o comando
-    ```bash
-    npm run preview
+5. Abra `http://localhost:44391` no navegador.
 
-O terminal indicará o endereço para abrir no navegador, normalmente `http://localhost:5173`.
+O Vite encaminha as chamadas `/api` para `http://localhost:8080`, que é a porta da API executada pelo Docker. Para usar a API pelo IIS Express, execute antes:
 
+```powershell
+$env:API_PROXY_URL = "https://localhost:44390"
+npm run dev
+```
 
 ## Materiais do projeto
 

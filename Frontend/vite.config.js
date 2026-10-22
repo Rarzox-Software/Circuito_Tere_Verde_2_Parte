@@ -6,6 +6,7 @@ import svgr from 'vite-plugin-svgr'
 import tailwindcss from '@tailwindcss/vite'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const apiProxyUrl = process.env.API_PROXY_URL ?? 'http://localhost:8080'
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -23,8 +24,10 @@ export default defineConfig({
     port: 44391,
     proxy: {
       '/api': {
-        target: 'https://localhost:44390/',
+        // Mantém o navegador no endereço do frontend e encaminha chamadas para a API HTTP local.
+        target: apiProxyUrl,
         changeOrigin: true,
+        // Também aceita o certificado de desenvolvimento quando a API for iniciada pelo IIS Express.
         secure: false,
         ws: true,
         configure: (proxy) => {
