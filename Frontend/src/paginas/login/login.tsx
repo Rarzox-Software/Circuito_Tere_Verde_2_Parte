@@ -79,10 +79,6 @@ export default function Login() {
             ENTRAR
           </button>
         </form>
-
-        <p className="text-center text-xs text-green-900/60 mt-4 cursor-pointer">
-          Recuperar senha
-        </p>
       </div>
     </div>
   );
