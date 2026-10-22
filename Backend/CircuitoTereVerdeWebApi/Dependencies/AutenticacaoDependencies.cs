@@ -6,8 +6,12 @@ namespace CircuitoTereVerdeWebApi.Dependencies;
 
 public static class AutenticacaoDependencies
 {
-    public static IServiceCollection AddAutenticacao(this IServiceCollection services)
+    public static IServiceCollection AddAutenticacao(
+        this IServiceCollection services,
+        IWebHostEnvironment environment)
     {
+        var usarCookieSeguroSempre = environment.IsProduction();
+
         services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {
                 options.User.RequireUniqueEmail = true;
@@ -27,8 +31,10 @@ public static class AutenticacaoDependencies
         {
             options.Cookie.Name = "CircuitoTereVerde.Auth";
             options.Cookie.HttpOnly = true;
-            // Em HTTP local funciona sem Secure; atrás do Nginx HTTPS, usa Secure automaticamente.
-            options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+            // Em produção, somente HTTPS envia o cookie. Em desenvolvimento, HTTP local continua disponível.
+            options.Cookie.SecurePolicy = usarCookieSeguroSempre
+                ? CookieSecurePolicy.Always
+                : CookieSecurePolicy.SameAsRequest;
             options.Cookie.SameSite = SameSiteMode.Strict;
             options.Cookie.Path = "/";
             options.ExpireTimeSpan = TimeSpan.FromHours(8);

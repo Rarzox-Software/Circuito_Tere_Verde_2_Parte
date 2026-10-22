@@ -8,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddConexao(builder.Configuration, builder.Environment);
 
 // Configura o Identity, o cookie de sessão e as permissões de acesso.
-builder.Services.AddAutenticacao();
+builder.Services.AddAutenticacao(builder.Environment);
 
 // Configura o encaminhamento do protocolo original pelo Nginx, quando habilitado.
 builder.Services.AddProxyReverso(builder.Configuration);
@@ -27,6 +27,12 @@ app.UseProxyReverso(builder.Configuration);
 
 // Converte as exceções da aplicação em respostas JSON consistentes.
 app.UseExceptionHandler();
+
+if (app.Environment.IsProduction())
+{
+    // Exige HTTPS em produção; o protocolo encaminhado pelo Nginx já foi lido acima.
+    app.UseHttpsRedirection();
+}
 
 if (app.Environment.IsDevelopment())
 {
