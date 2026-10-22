@@ -1,6 +1,6 @@
 <img width="150" height="150" alt="Logo Circuito TereVerde" src="./Frontend/prototipo/Logo Circuito TereVerde.png" />
 
-# Grupo 2
+# Grupo:
 **Rafael Mendes,**
 **Igor Augusto,** 
 **Nauan Pereira,** 
@@ -59,12 +59,18 @@ Você pode visualizar os slides de apresentação do MVP no link abaixo:
 
 ## Como executar com Docker
 
-### Backend
-
-Com o Docker Desktop aberto, execute:
+Com o Docker Desktop aberto, crie uma rede para que os dois containers se encontrem:
 
 ```powershell
-docker run -d --name circuito-tereverde-api -p 8080:8080 -v circuito-tereverde-dados:/data -e ASPNETCORE_ENVIRONMENT=Development rarzox/circuitotereverdewebapi:beta-teste
+docker network create circuito-tereverde
+```
+
+### Backend
+
+Execute a API:
+
+```powershell
+docker run -d --name circuito-tereverde-api --network circuito-tereverde -p 8080:8080 -v circuito-tereverde-dados:/data -e ASPNETCORE_ENVIRONMENT=Development rarzox/circuitotereverdewebapi:beta-teste
 ```
 
 A API e o Swagger estarão disponíveis em:
@@ -75,7 +81,21 @@ http://localhost:8080/swagger
 
 ### Frontend
 
-O comando do site será incluído nesta seção quando a imagem do frontend estiver publicada.
+Depois, execute o site:
+
+```powershell
+docker run -d --name circuito-tereverde-web --network circuito-tereverde -p 8081:80 rarzox/circuitotereverdeweb:beta-teste
+```
+
+O site estará disponível em:
+
+```text
+http://localhost:8081
+```
+
+O site encaminha internamente as chamadas para a API. Por isso, o navegador usa a mesma origem HTTP e o cookie de autenticação funciona no ambiente local.
+
+Em uma VPS com Nginx e HTTPS, mantenha os dois containers na rede e encaminhe o domínio para o container do site. O Nginx externo deve enviar o cabeçalho `X-Forwarded-Proto: https`, que o site repassa para a API.
 
 Após iniciar o backend e o frontend, entre como administrador de desenvolvimento com:
 
@@ -87,8 +107,8 @@ Senha: AdminTeste123!
 
 ## Frontend
 
-[README do Frontend](./Frontend/README.md)
+[README do Frontend](./Frontend)
 
 ## Backend
 
-[README do Backend](./Backend/README.md)
+[README do Backend](./Backend)
