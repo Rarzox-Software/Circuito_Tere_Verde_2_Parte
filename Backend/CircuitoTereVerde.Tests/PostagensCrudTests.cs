@@ -1,4 +1,5 @@
 using System.Net;
+using System.Net.Http.Json;
 using System.Text.Json;
 using CircuitoTereVerde.Core.Domain;
 using CircuitoTereVerde.Core.Infra.Context;
@@ -176,6 +177,53 @@ public sealed class PostagensCrudTests
     #endregion
 
     #region Validações do cadastro e registros inexistentes
+
+    [Fact]
+    public async Task CadastroAceitaDataFimVaziaEDeixaPostagemPublicaPorTempoIndefinido()
+    {
+        using var cliente = _fixture.Factory.CreateClient();
+        await ApiTesteHelpers.EntrarComoAdministradorAsync(cliente, _fixture.Factory);
+        var titulo = $"Postagem sem data final {Guid.NewGuid():N}";
+        var inicio = DateOnly.FromDateTime(DateTime.UtcNow);
+        var foto = new byte[] { 137, 80, 78, 71, 13, 10, 26, 10 };
+        int? idCriado = null;
+
+        try
+        {
+            // O formulário envia texto vazio quando a data final não foi preenchida.
+            using var conteudo = JsonContent.Create(new
+            {
+                parque = CodigosCatalogo.Parques.Pnso,
+                tipo = CodigosCatalogo.Tipos.Eventos,
+                titulo,
+                descricao = "Postagem sem encerramento.",
+                dataInicio = inicio,
+                dataFim = string.Empty,
+                foto = $"data:image/png;base64,{Convert.ToBase64String(foto)}"
+            });
+            using var criacao = await cliente.PostAsync("/api/admin/postagens", conteudo);
+            Assert.Equal(HttpStatusCode.Created, criacao.StatusCode);
+            using var criada = JsonDocument.Parse(await criacao.Content.ReadAsStringAsync());
+            idCriado = criada.RootElement.GetProperty("id").GetInt32();
+            _fixture.RegistrarPostagemCriada(idCriado.Value);
+            Assert.False(criada.RootElement.TryGetProperty("dataFim", out _));
+
+            // Sem data final, a postagem permanece disponível na consulta pública.
+            using var publica = await cliente.GetAsync("/api/postagens");
+            Assert.Equal(HttpStatusCode.OK, publica.StatusCode);
+            using var postagens = JsonDocument.Parse(await publica.Content.ReadAsStringAsync());
+            Assert.Contains(postagens.RootElement.GetProperty("itens").EnumerateArray(), item =>
+                item.GetProperty("id").GetInt32() == idCriado.Value);
+        }
+        finally
+        {
+            if (idCriado.HasValue)
+            {
+                using var exclusao = await ApiTesteHelpers.EnviarComIdAsync(
+                    cliente, HttpMethod.Delete, "/api/admin/postagens", idCriado.Value);
+            }
+        }
+    }
 
     [Theory]
     [InlineData("titulo_vazio")]

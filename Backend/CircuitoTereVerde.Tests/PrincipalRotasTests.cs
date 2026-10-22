@@ -1,5 +1,8 @@
 using System.Net;
 using System.Text.Json;
+using CircuitoTereVerde.Core.Infra.Context;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CircuitoTereVerde.Tests;
 
@@ -50,6 +53,27 @@ public sealed class PrincipalRotasTests
         Assert.Equal(HttpStatusCode.OK, respostaDestaques.StatusCode);
         using var destaques = JsonDocument.Parse(await respostaDestaques.Content.ReadAsStringAsync());
         Assert.True(destaques.RootElement.GetArrayLength() <= 5);
+    }
+
+    [Fact]
+    public async Task DesenvolvimentoCriaPeloMenosCincoPostagensParaCadaParque()
+    {
+        // Consulta o SQLite usado pela API para confirmar a carga real dos dados de desenvolvimento.
+        await using var escopo = _fixture.Factory.Services.CreateAsyncScope();
+        var contexto = escopo.ServiceProvider.GetRequiredService<CircuitoTereVerdeDbContext>();
+        var postagens = await contexto.Postagens
+            .Select(item => new
+            {
+                CodigoParque = item.Parque.Codigo,
+                TemFoto = item.FotoPostagem.Conteudo.Length > 0
+            })
+            .ToListAsync();
+
+        // Cada parque começa com ao menos cinco postagens e cada uma tem a foto gravada em BLOB.
+        Assert.True(postagens.Count(item => item.CodigoParque == "PNSO") >= 5);
+        Assert.True(postagens.Count(item => item.CodigoParque == "PETP") >= 5);
+        Assert.True(postagens.Count(item => item.CodigoParque == "PNMMT") >= 5);
+        Assert.All(postagens, item => Assert.True(item.TemFoto));
     }
 
     [Fact]

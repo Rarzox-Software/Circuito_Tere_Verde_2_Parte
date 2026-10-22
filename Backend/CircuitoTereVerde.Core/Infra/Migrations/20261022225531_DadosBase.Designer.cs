@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CircuitoTereVerde.Core.Infra.Migrations
 {
     [DbContext(typeof(CircuitoTereVerdeDbContext))]
-    [Migration("20261007032007_teste")]
-    partial class teste
+    [Migration("20261022225531_DadosBase")]
+    partial class DadosBase
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -198,6 +198,8 @@ namespace CircuitoTereVerde.Core.Infra.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CriadoPorId");
 
                     b.HasIndex("FotoPostagemId")
                         .IsUnique();
@@ -407,6 +409,12 @@ namespace CircuitoTereVerde.Core.Infra.Migrations
 
             modelBuilder.Entity("CircuitoTereVerde.Core.Models.Postagem", b =>
                 {
+                    b.HasOne("CircuitoTereVerde.Core.Models.ApplicationUser", "CriadoPor")
+                        .WithMany("PostagensCriadas")
+                        .HasForeignKey("CriadoPorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("CircuitoTereVerde.Core.Models.FotoPostagem", "FotoPostagem")
                         .WithOne()
                         .HasForeignKey("CircuitoTereVerde.Core.Models.Postagem", "FotoPostagemId")
@@ -424,6 +432,8 @@ namespace CircuitoTereVerde.Core.Infra.Migrations
                         .HasForeignKey("TipoPostagemId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("CriadoPor");
 
                     b.Navigation("FotoPostagem");
 
@@ -481,6 +491,11 @@ namespace CircuitoTereVerde.Core.Infra.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("CircuitoTereVerde.Core.Models.ApplicationUser", b =>
+                {
+                    b.Navigation("PostagensCriadas");
                 });
 #pragma warning restore 612, 618
         }

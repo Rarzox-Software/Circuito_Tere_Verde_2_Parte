@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CircuitoTereVerde.Core.Infra.Migrations
 {
     [DbContext(typeof(CircuitoTereVerdeDbContext))]
-    [Migration("20261006155430_Inicial")]
+    [Migration("20261022225515_Inicial")]
     partial class Inicial
     {
         /// <inheritdoc />
@@ -130,26 +130,6 @@ namespace CircuitoTereVerde.Core.Infra.Migrations
                         .IsUnique();
 
                     b.ToTable("Parques");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Codigo = "PNSO",
-                            Nome = "Parque Nacional da Serra dos Órgãos"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Codigo = "PNMMT",
-                            Nome = "Parque Natural Municipal Montanhas de Teresópolis"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Codigo = "PETP",
-                            Nome = "Parque Estadual dos Três Picos"
-                        });
                 });
 
             modelBuilder.Entity("CircuitoTereVerde.Core.Models.Postagem", b =>
@@ -199,6 +179,8 @@ namespace CircuitoTereVerde.Core.Infra.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CriadoPorId");
+
                     b.HasIndex("FotoPostagemId")
                         .IsUnique();
 
@@ -231,50 +213,6 @@ namespace CircuitoTereVerde.Core.Infra.Migrations
                         .IsUnique();
 
                     b.ToTable("TiposPostagem");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Codigo = "TRILHAS",
-                            Nome = "TRILHAS"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Codigo = "CACHOEIRAS",
-                            Nome = "CACHOEIRAS"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Codigo = "BIODIVERSIDADE",
-                            Nome = "BIODIVERSIDADE"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Codigo = "EVENTOS",
-                            Nome = "EVENTOS"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Codigo = "NOVIDADES",
-                            Nome = "NOVIDADES"
-                        },
-                        new
-                        {
-                            Id = 6,
-                            Codigo = "ATRAÇÕES",
-                            Nome = "ATRAÇÕES"
-                        },
-                        new
-                        {
-                            Id = 7,
-                            Codigo = "SOBRE",
-                            Nome = "SOBRE"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -407,6 +345,12 @@ namespace CircuitoTereVerde.Core.Infra.Migrations
 
             modelBuilder.Entity("CircuitoTereVerde.Core.Models.Postagem", b =>
                 {
+                    b.HasOne("CircuitoTereVerde.Core.Models.ApplicationUser", "CriadoPor")
+                        .WithMany("PostagensCriadas")
+                        .HasForeignKey("CriadoPorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("CircuitoTereVerde.Core.Models.FotoPostagem", "FotoPostagem")
                         .WithOne()
                         .HasForeignKey("CircuitoTereVerde.Core.Models.Postagem", "FotoPostagemId")
@@ -424,6 +368,8 @@ namespace CircuitoTereVerde.Core.Infra.Migrations
                         .HasForeignKey("TipoPostagemId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("CriadoPor");
 
                     b.Navigation("FotoPostagem");
 
@@ -481,6 +427,11 @@ namespace CircuitoTereVerde.Core.Infra.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("CircuitoTereVerde.Core.Models.ApplicationUser", b =>
+                {
+                    b.Navigation("PostagensCriadas");
                 });
 #pragma warning restore 612, 618
         }
