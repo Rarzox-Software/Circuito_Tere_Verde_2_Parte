@@ -1,6 +1,6 @@
 <img width="150" height="150" alt="Logo Circuito TereVerde" src="./Frontend/prototipo/Logo Circuito TereVerde.png" />
 
-# Grupo 2
+# Grupo:
 **Rafael Mendes,**
 **Igor Augusto,** 
 **Nauan Pereira,** 
@@ -107,8 +107,8 @@ Senha: AdminTeste123!
 
 ## Frontend
 
-[README do Frontend](./Frontend/README.md)
+[README do Frontend](./Frontend)
 
 ## Backend
 
-[README do Backend](./Backend/README.md)
+[README do Backend](./Backend)

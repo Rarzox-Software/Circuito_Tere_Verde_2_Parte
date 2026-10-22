@@ -82,8 +82,15 @@ $env:API_PROXY_URL = "https://localhost:44390"
 npm run dev
 ```
 
+## Melhorias Futuras
+- Possibilidade de Cadastrar mais parques e atrações.
+- Feedback visual mais interativo para validações.
+- Agendamento para Camping.
+
 ## Materiais do projeto
 
 - [README principal do Circuito Terê Verde](../README.md)
 - [Documentação do Backend](../Backend/README.md)
 - [Apresentação do MVP](../Apresentação/Apresentacao_MVP.pptx)
+
+
