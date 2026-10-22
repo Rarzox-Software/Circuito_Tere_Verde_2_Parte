@@ -42,6 +42,10 @@ Os endpoints são os caminhos usados para acessar os recursos da API. Os endpoin
 
 Os filtros e a paginação da listagem, assim como os IDs usados nas consultas e alterações, são enviados nos cabeçalhos da requisição. O cadastro de uma postagem recebe os dados e a imagem; a imagem deve ser JPG, PNG ou WEBP e ter até 5 MB.
 
+## Requisitos do Backend
+
+🔗 [Clique aqui para acessar a planilha de requisitos](../requisitos/Requisitos_Backend.xlsx)
+
 ## Tecnologias utilizadas
 
 - **ASP.NET Core 10** — criação da API e organização das rotas.
@@ -95,8 +99,6 @@ Na primeira execução, a API cria o banco SQLite, aplica as migrações pendent
 As credenciais do administrador de desenvolvimento estão em `appsettings.Development.json`.
 
 ## Requisitos e materiais
-
-- [Requisitos do Backend](../requisitos/Requisitos_Backend.xlsx)
 - [README principal do Circuito Terê Verde](../README.md)
 - [Documentação do Frontend](../Frontend/README.md)
 - [Apresentação do MVP](../Apresentação/Apresentacao_MVP.pptx)
