@@ -36,13 +36,18 @@ class PostagemService extends BaseCrudService<PostagemDto> {
     super("/postagens");
   }
 
-  async getPostagens(filtro: FiltroPostagens = {}): Promise<PaginaDto<PostagemDto>> {
+  async getPostagens(
+    filtro: FiltroPostagens = {},
+  ): Promise<PaginaDto<PostagemDto>> {
     // Monta os filtros em cabecalhos
     const headers = new Headers();
     if (filtro.parque) headers.set("parque", filtro.parque);
     if (filtro.tipo) headers.set("tipo", filtro.tipo);
     if (filtro.pagina) headers.set("pagina", filtro.pagina.toString());
-    if (filtro.tamanhoPagina) headers.set("tamanhoPagina", filtro.tamanhoPagina.toString());
+    if (filtro.tamanhoPagina)
+      headers.set("tamanhoPagina", filtro.tamanhoPagina.toString());
+
+    console.log(filtro);
 
     return this.request<PaginaDto<PostagemDto>>(this.baseUrl, {
       method: "GET",
@@ -64,4 +69,9 @@ class PostagemService extends BaseCrudService<PostagemDto> {
   }
 }
 
-export { type FiltroPostagens, type PaginaDto, type PostagemDto, PostagemService };
+export {
+  type FiltroPostagens,
+  type PaginaDto,
+  type PostagemDto,
+  PostagemService,
+};
