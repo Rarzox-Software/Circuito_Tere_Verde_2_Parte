@@ -18,6 +18,7 @@ export default function CustomCarousel() {
       plugins={[
         Autoplay({
           delay: 6000,
+          stopOnInteraction: false,
         }),
       ]}>
       <CarouselContent>

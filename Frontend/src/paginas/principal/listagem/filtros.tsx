@@ -23,7 +23,7 @@ export default function FiltrosListagem({
     { label: "BIODIVERSIDADE", codigo: "BIODIVERSIDADE" },
     { label: "EVENTOS", codigo: "EVENTOS" },
     { label: "NOVIDADES", codigo: "NOVIDADES" },
-    { label: "ATRAÇÕES", codigo: "ATRAÇÕES" },
+    { label: "ATRAÇÕES", codigo: "ATRACOES" },
     { label: "SOBRE", codigo: "SOBRE" },
   ];
 

@@ -20,7 +20,11 @@ export class BaseCrudService<T> {
 
     if (!response.ok) {
       const erro = await response.json().catch(() => null);
-      throw new Error(erro?.detail ?? erro?.title ?? `Erro na requisicao: ${response.status}.`);
+      throw new Error(
+        erro?.detail ??
+          erro?.title ??
+          `Erro na requisicao: ${response.status}.`,
+      );
     }
 
     // Evita erro em respostas sem conteudo
