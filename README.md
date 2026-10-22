@@ -1,6 +1,6 @@
 <img width="150" height="150" alt="Logo Circuito TereVerde" src="./Frontend/prototipo/Logo Circuito TereVerde.png" />
 
-# Grupo 2
+# Grupo:
 **Rafael Mendes,**
 **Igor Augusto,** 
 **Nauan Pereira,** 
