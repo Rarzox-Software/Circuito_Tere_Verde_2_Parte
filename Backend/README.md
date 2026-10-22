@@ -44,7 +44,8 @@ Os filtros e a paginação da listagem, assim como os IDs usados nas consultas e
 
 ## Requisitos do Backend
 
-🔗 [Clique aqui para acessar a planilha de requisitos](../requisitos/Requisitos_Backend.xlsx)
+🔗 [Clique aqui para acessar a planilha de requisitos]()
+- [Baixar Planilha](https://github.com/Rarzox-Software/Circuito_Tere_Verde_2_Parte/blob/main/requisitos/Requisitos_Backend.xlsx)
 
 ## Tecnologias utilizadas
 
