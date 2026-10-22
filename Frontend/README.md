@@ -43,7 +43,7 @@ As telas foram planejadas no Figma e serviram como referência para a construç�
 ## Requisitos do Frontend
 
 🔗 [Clique aqui para acessar a planilha de requisitos](https://docs.google.com/spreadsheets/d/17M4lhHh-zplAb1LycOdzhCNI1cL9nvuHoTDNzm8jUvw/edit?usp=sharing)
-- [Baixar Planilha](https://raw.githubusercontent.com/Rarzox-Software/Circuito_Tere_Verde_2_Parte/blob/main/requisitos/Requisitos_Frontend.xlsx](https://github.com/Rarzox-Software/Circuito_Tere_Verde_2_Parte/blob/main/requisitos/Requisitos_Frontend.xlsx))
+- [Baixar Planilha](https://github.com/Rarzox-Software/Circuito_Tere_Verde_2_Parte/blob/main/requisitos/Requisitos_Frontend.xlsx)
 
 ## Tecnologias Utilizadas
 
