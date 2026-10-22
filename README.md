@@ -112,3 +112,24 @@ Senha: AdminTeste123!
 ## Backend
 
 [README do Backend](./Backend)
+
+## Créditos das imagens de desenvolvimento
+
+As imagens das postagens iniciais são utilizadas somente no ambiente de desenvolvimento. Todas foram obtidas no Wikimedia Commons, mantendo autor e licença de cada arquivo.
+
+- Dedo de Deus: Rafaelm, CC BY-SA 3.0. [Fonte](https://commons.wikimedia.org/wiki/File:Dedo_de_Deus_-_Serra_dos_%C3%93rg%C3%A3os.JPG)
+- Bromélia na Serra dos Órgãos: Guilherme Haruo, CC BY-SA 4.0. [Fonte](https://commons.wikimedia.org/wiki/File:Brom%C3%A9lia_na_Serra_dos_%C3%93rg%C3%A3os.jpg)
+- Começo da travessia Serra dos Órgãos: Beatriz de Castro Lima Varella, CC BY-SA 3.0. [Fonte](https://commons.wikimedia.org/wiki/File:Come%C3%A7o_da_travessia_Serra_dos_%C3%93rg%C3%A3os.jpg)
+- Cachoeira do Parque Nacional da Serra dos Órgãos, sede Guapimirim: Ferreiraandreza, CC BY-SA 3.0. [Fonte](https://commons.wikimedia.org/wiki/File:Cachoeira_do_Parque_Nacional_da_Serra_dos_%C3%93rg%C3%A3os_Sede_Guapimirim.jpg)
+- Quati no Parque Nacional da Serra dos Órgãos: Kovags, domínio público. [Fonte](https://commons.wikimedia.org/wiki/File:Coati_(Nasua_nasua)_at_Parque_Nacional_da_Serra_dos_%C3%93rg%C3%A3os,_Teres%C3%B3polis,_Brazil.jpg)
+- Cachoeira Véu da Noiva: Ferreiraandreza, CC BY-SA 3.0. [Fonte](https://commons.wikimedia.org/wiki/File:Cachoeira_v%C3%A9u_da_noiva.jpg)
+- Parque Estadual dos Três Picos: Rkrr, CC BY-SA 4.0. [Fonte](https://commons.wikimedia.org/wiki/File:Parque_Estadual_dos_Tres_Picos.jpg)
+- Cachoeira dos Frades II: Shooterb9, CC BY-SA 3.0. [Fonte](https://commons.wikimedia.org/wiki/File:Cachoeira_dos_Frades_II.jpg)
+- Sabiá-laranjeira no Parque Estadual dos Três Picos: Luiz Artur Raya Tavora, CC BY-SA 3.0. [Fonte](https://commons.wikimedia.org/wiki/File:Sabi%C3%A1_Laranjeira(Turdus_rufiventris)Parque_Estadual_dos_Tr%C3%AAs_Picos_(PETP)_Boca_do_Mato_,_Cachoeiras_de_Macacu.JPG)
+- Amanhecer nos Três Picos: Carlos Perez Couto, CC BY-SA 3.0. [Fonte](https://commons.wikimedia.org/wiki/File:Amanhecer_nos_Tres_picos.jpg)
+- A caminho do cume: Jeovane da Rocha, CC BY-SA 4.0. [Fonte](https://commons.wikimedia.org/wiki/File:A_caminho_do_cume!.jpg)
+- Parque Natural Municipal Montanhas de Teresópolis: André Luiz Menezes da Costa, CC BY-SA 4.0. [Fonte](https://commons.wikimedia.org/wiki/File:Parque_Natural_Municipal_Montanhas_de_Teres%C3%B3polis.jpg)
+- Pedra da Tartaruga: Fernandonmartins, CC BY-SA 4.0. [Fonte](https://commons.wikimedia.org/wiki/File:Pedradatartaruga.jpg)
+- Mulher de Pedra: Fernandonmartins, CC BY-SA 4.0. [Fonte](https://commons.wikimedia.org/wiki/File:Mulherdepedra.jpg)
+- Paisagem do Parque Natural Montanhas de Teresópolis: Tedd Santana, CC BY-SA 2.0. [Fonte](https://commons.wikimedia.org/wiki/File:Parque_Natural_Montanhas_de_Teres%C3%B3polis_(48110111748).jpg)
+- Vista do Parque Natural Montanhas de Teresópolis: Tedd Santana, CC BY-SA 2.0. [Fonte](https://commons.wikimedia.org/wiki/File:Parque_Natural_Montanhas_de_Teres%C3%B3polis_(48114437796).jpg)

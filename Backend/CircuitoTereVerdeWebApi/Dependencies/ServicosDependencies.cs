@@ -1,5 +1,6 @@
 using CircuitoTereVerde.Core.Infra.UnitOfWork;
 using CircuitoTereVerde.Core.Services;
+using CircuitoTereVerdeWebApi.Converters;
 using CircuitoTereVerdeWebApi.Handlers;
 using CircuitoTereVerdeWebApi.Services;
 using Microsoft.EntityFrameworkCore;
@@ -20,6 +21,9 @@ public static class ServicosDependencies
         {
             // Não devolve campos nulos que não são úteis ao frontend.
             options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+
+            // Uma data final vazia representa uma postagem sem prazo de encerramento.
+            options.JsonSerializerOptions.Converters.Add(new DataOnlyNulaJsonConverter());
         });
 
         // Registra a resposta padrão e a classe que traduz erros da aplicação.

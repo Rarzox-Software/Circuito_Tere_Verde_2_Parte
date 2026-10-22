@@ -22,4 +22,11 @@
     <ProjectReference Include="..\CircuitoTereVerde.Core\CircuitoTereVerde.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="Assets\PostagensDesenvolvimento\**\*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>

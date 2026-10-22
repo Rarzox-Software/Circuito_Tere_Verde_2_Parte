@@ -1,9 +1,7 @@
-using System;
+﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
-
-#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
 
 namespace CircuitoTereVerde.Core.Infra.Migrations
 {
@@ -230,6 +228,12 @@ namespace CircuitoTereVerde.Core.Infra.Migrations
                 {
                     table.PrimaryKey("PK_Postagens", x => x.Id);
                     table.ForeignKey(
+                        name: "FK_Postagens_AspNetUsers_CriadoPorId",
+                        column: x => x.CriadoPorId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
                         name: "FK_Postagens_FotosPostagem_FotoPostagemId",
                         column: x => x.FotoPostagemId,
                         principalTable: "FotosPostagem",
@@ -247,30 +251,6 @@ namespace CircuitoTereVerde.Core.Infra.Migrations
                         principalTable: "TiposPostagem",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.InsertData(
-                table: "Parques",
-                columns: new[] { "Id", "Codigo", "Nome" },
-                values: new object[,]
-                {
-                    { 1, "PNSO", "Parque Nacional da Serra dos Órgãos" },
-                    { 2, "PNMMT", "Parque Natural Municipal Montanhas de Teresópolis" },
-                    { 3, "PETP", "Parque Estadual dos Três Picos" }
-                });
-
-            migrationBuilder.InsertData(
-                table: "TiposPostagem",
-                columns: new[] { "Id", "Codigo", "Nome" },
-                values: new object[,]
-                {
-                    { 1, "TRILHAS", "TRILHAS" },
-                    { 2, "CACHOEIRAS", "CACHOEIRAS" },
-                    { 3, "BIODIVERSIDADE", "BIODIVERSIDADE" },
-                    { 4, "EVENTOS", "EVENTOS" },
-                    { 5, "NOVIDADES", "NOVIDADES" },
-                    { 6, "ATRAÇÕES", "ATRAÇÕES" },
-                    { 7, "SOBRE", "SOBRE" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -315,6 +295,11 @@ namespace CircuitoTereVerde.Core.Infra.Migrations
                 table: "Parques",
                 column: "Codigo",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Postagens_CriadoPorId",
+                table: "Postagens",
+                column: "CriadoPorId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Postagens_FotoPostagemId",

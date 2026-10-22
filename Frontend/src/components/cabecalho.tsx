@@ -1,4 +1,5 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
+import { LogOut, Newspaper } from "lucide-react";
 import Logo from "../assets/logo.svg?react";
 import { useLogout, useUsuarioAtual } from "@/api/useLogin";
 import Container from "./container";
@@ -40,10 +41,23 @@ export default function Cabecalho() {
           {logado && (
             <>
               {!estaNaPaginaPostagens && (
-                <Link to="/postagens">Publicações</Link>
+                <Link
+                  to="/postagens"
+                  className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-primary shadow-sm transition-colors hover:bg-[#E3EAD8] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/80"
+                >
+                  <Newspaper className="size-4" aria-hidden="true" />
+                  Publicações
+                </Link>
               )}
 
-              <button onClick={sair}>Sair</button>
+              <button
+                className="inline-flex items-center gap-2 rounded-full border border-white/60 px-4 py-2 text-sm font-semibold transition-colors hover:bg-white/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/80 disabled:cursor-not-allowed disabled:opacity-60"
+                disabled={logoutMutation.isPending}
+                onClick={sair}
+              >
+                <LogOut className="size-4" aria-hidden="true" />
+                {logoutMutation.isPending ? "Saindo..." : "Sair"}
+              </button>
             </>
           )}
 
