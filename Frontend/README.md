@@ -80,8 +80,15 @@ As telas foram planejadas no Figma e serviram como referência para a construç�
 O terminal indicará o endereço para abrir no navegador, normalmente `http://localhost:5173`.
 
 
+## Melhorias Futuras
+- Possibilidade de Cadastrar mais parques e atrações.
+- Feedback visual mais interativo para validações.
+- Agendamento para Camping.
+
 ## Materiais do projeto
 
 - [README principal do Circuito Terê Verde](../README.md)
 - [Documentação do Backend](../Backend/README.md)
 - [Apresentação do MVP](../Apresentação/Apresentacao_MVP.pptx)
+
+
