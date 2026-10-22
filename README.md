@@ -87,8 +87,8 @@ Senha: AdminTeste123!
 
 ## Frontend
 
-[README do Frontend](./Frontend/README.md)
+[README do Frontend](./Frontend)
 
 ## Backend
 
-[README do Backend](./Backend/README.md)
+[README do Backend](./Backend)
