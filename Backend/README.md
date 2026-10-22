@@ -100,3 +100,13 @@ As credenciais do administrador de desenvolvimento estão em `appsettings.Develo
 - [README principal do Circuito Terê Verde](../README.md)
 - [Documentação do Frontend](../Frontend/README.md)
 - [Apresentação do MVP](../Apresentação/Apresentacao_MVP.pptx)
+
+## Implementações futuras
+
+- **Backup do banco SQLite:** a cópia de segurança do banco, que também guarda as imagens das postagens, ficou como melhoria futura de prioridade baixa.
+
+## Testes
+
+O projeto possui testes de integração que executam a API com o SQLite de desenvolvimento. Eles verificam a criação e atualização do banco, o administrador inicial, login, sessão, permissões, bloqueio de tentativas, consultas públicas, filtros, paginação, CORS e o CRUD de postagens com imagens.
+
+\* Os cenários de teste foram montados com apoio de IA para ampliar a cobertura dos casos de uso do MVP.

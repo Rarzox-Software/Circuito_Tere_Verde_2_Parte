@@ -66,6 +66,13 @@ public sealed class InicializacaoBancoTests
         Assert.True(await usuarios.CheckPasswordAsync(administrador, _fixture.Factory.SenhaAdministrador));
         Assert.NotEqual(_fixture.Factory.SenhaAdministrador, administrador.PasswordHash);
 
+        // Cada postagem aponta para um usuário existente e o banco impede excluir esse usuário por engano.
+        var entidadePostagem = contexto.Model.FindEntityType(typeof(Postagem))!;
+        var propriedadeCriadoPor = entidadePostagem.FindProperty(nameof(Postagem.CriadoPorId))!;
+        var relacionamentoCriadoPor = entidadePostagem.FindForeignKeys(propriedadeCriadoPor).Single();
+        Assert.Equal(typeof(ApplicationUser), relacionamentoCriadoPor.PrincipalEntityType.ClrType);
+        Assert.Equal(DeleteBehavior.Restrict, relacionamentoCriadoPor.DeleteBehavior);
+
         var idAdministrador = administrador.Id;
         var senhaProtegida = administrador.PasswordHash;
         var quantidadeUsuarios = await contexto.Users.CountAsync();
