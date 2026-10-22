@@ -3,10 +3,15 @@ using System.Net.Http.Json;
 using System.Text.Json;
 using CircuitoTereVerde.Core.Infra.Context;
 using CircuitoTereVerde.Core.Models;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 
 namespace CircuitoTereVerde.Tests;
 
@@ -216,6 +221,19 @@ public sealed class AutenticacaoRotasTests
         // A mesma sessão HTTP local deve acessar a rota protegida normalmente.
         using var sessao = await cliente.GetAsync("/api/auth/me");
         Assert.Equal(HttpStatusCode.OK, sessao.StatusCode);
+    }
+
+    [Fact]
+    public void ProducaoConfiguraCookieSempreSeguro()
+    {
+        // A configuração de produção exige Secure mesmo antes de uma requisição chegar à API.
+        using var fabrica = new ApiTesteFactory(Environments.Production);
+        var opcoes = fabrica.Services.GetRequiredService<IOptionsMonitor<CookieAuthenticationOptions>>();
+        var cookie = opcoes.Get(IdentityConstants.ApplicationScheme).Cookie;
+
+        Assert.True(cookie.HttpOnly);
+        Assert.Equal(CookieSecurePolicy.Always, cookie.SecurePolicy);
+        Assert.Equal(SameSiteMode.Strict, cookie.SameSite);
     }
 
     #endregion

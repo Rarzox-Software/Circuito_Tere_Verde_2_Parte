@@ -13,8 +13,11 @@ namespace CircuitoTereVerde.Tests;
 // A API de teste usa o appsettings.Development e o banco SQLite fixo do projeto.
 public sealed class ApiTesteFactory : WebApplicationFactory<Program>
 {
-    public ApiTesteFactory()
+    private readonly string _ambiente;
+
+    public ApiTesteFactory(string? ambiente = null)
     {
+        _ambiente = ambiente ?? Environments.Development;
         // Usa HTTPS para que o cliente de teste envie o cookie Secure da API.
         ClientOptions.BaseAddress = new Uri("https://localhost");
     }
@@ -53,9 +56,22 @@ public sealed class ApiTesteFactory : WebApplicationFactory<Program>
 
         var raizApi = Path.Combine(diretorio.FullName, "CircuitoTereVerdeWebApi");
 
-        builder.UseEnvironment(Environments.Development);
+        builder.UseEnvironment(_ambiente);
         builder.UseContentRoot(raizApi);
         builder.ConfigureLogging(logging => logging.ClearProviders());
+        builder.ConfigureAppConfiguration((_, configuracao) =>
+        {
+            // O cenário de produção usa o mesmo SQLite de desenvolvimento, com as credenciais de teste.
+            if (_ambiente == Environments.Production)
+            {
+                configuracao.AddInMemoryCollection(new Dictionary<string, string?>
+                {
+                    ["ConnectionStrings:DefaultConnection"] = "Data Source=../data/circuito-tereverde-dev.db",
+                    ["BootstrapAdmin:Email"] = "admin@circuitotereverde.test",
+                    ["BootstrapAdmin:Password"] = "AdminTeste123!"
+                });
+            }
+        });
         builder.ConfigureServices(services =>
         {
             var pastaChaves = Path.Combine(diretorio.FullName, "build-codex", "data-protection-keys");

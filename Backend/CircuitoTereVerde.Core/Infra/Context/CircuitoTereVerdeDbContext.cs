@@ -69,5 +69,10 @@ public sealed class CircuitoTereVerdeDbContext : IdentityDbContext<ApplicationUs
             .WithOne()
             .HasForeignKey<Postagem>(item => item.FotoPostagemId)
             .OnDelete(DeleteBehavior.Restrict);
+        builder.Entity<Postagem>()
+            .HasOne(item => item.CriadoPor)
+            .WithMany(item => item.PostagensCriadas)
+            .HasForeignKey(item => item.CriadoPorId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

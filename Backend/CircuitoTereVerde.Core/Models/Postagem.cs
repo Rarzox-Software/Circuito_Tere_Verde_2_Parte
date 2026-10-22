@@ -54,4 +54,7 @@ public sealed class Postagem : IEntity
     [Required]
     [MaxLength(450)]
     public string CriadoPorId { get; set; } = string.Empty;
+
+    [ForeignKey(nameof(CriadoPorId))]
+    public ApplicationUser CriadoPor { get; set; } = null!;
 }
