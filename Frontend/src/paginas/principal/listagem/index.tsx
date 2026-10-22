@@ -50,6 +50,11 @@ export default function Listagem() {
         {postagens.map((post, index) => (
           <CardPostagem key={post.id} postagem={post} id={`card-${index}`} />
         ))}
+        {data && postagens.length === 0 && (
+          <p className="py-10 text-center text-gray-600" role="status">
+            Não há postagens de acordo com os filtros selecionados.
+          </p>
+        )}
         <div ref={sentinelaRef} />
       </div>
     </>
