@@ -24,7 +24,7 @@ Construir a parte responsável por manter os conteúdos do Circuito Terê Verde 
 
 Os endpoints são os caminhos usados para acessar os recursos da API. Os endpoints administrativos exigem uma sessão de administrador.
 
-![Protótipo da página principal](./Swagger/swagger1.png)
+![Protótipo da página principal](./Swagger/swagger1.jpeg)
 
 
 | Método | Endpoint | Para que serve |
