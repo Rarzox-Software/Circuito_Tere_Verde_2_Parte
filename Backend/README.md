@@ -24,6 +24,8 @@ Construir a parte responsável por manter os conteúdos do Circuito Terê Verde 
 
 Os endpoints são os caminhos usados para acessar os recursos da API. Os endpoints administrativos exigem uma sessão de administrador.
 
+./Swagger/swagger 1.png
+
 | Método | Endpoint | Para que serve |
 | --- | --- | --- |
 | GET | `/api/parques` | Consulta os parques disponíveis. |
