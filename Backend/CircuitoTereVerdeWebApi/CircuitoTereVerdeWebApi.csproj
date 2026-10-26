@@ -23,10 +23,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Update="Assets\PostagensDesenvolvimento\**\*">
+    <None Update="Assets\PostagensDesenvolvimento\**\*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
+    </None>
   </ItemGroup>
 
 </Project>
