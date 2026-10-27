@@ -24,9 +24,23 @@ Construir a parte responsável por manter os conteúdos do Circuito Terê Verde 
 
 Os endpoints são os caminhos usados para acessar os recursos da API. Os endpoints administrativos exigem uma sessão de administrador.
 
-![](./Swagger/swagger1.jpeg)
 
-![](./Swagger/swagger2.jpeg)
+| Método | Endpoint | Para que serve |
+| :---: | --- | --- |
+| ![GET](https://img.shields.io/badge/GET-61AFFE?style=flat-square) | `/api/parques` | Consulta os parques disponíveis. |
+| ![GET](https://img.shields.io/badge/GET-61AFFE?style=flat-square) | `/api/tipos-postagem` | Consulta as categorias de conteúdo. |
+| ![GET](https://img.shields.io/badge/GET-61AFFE?style=flat-square) | `/api/postagens` | Lista postagens públicas; aceita filtros e paginação. |
+| ![GET](https://img.shields.io/badge/GET-61AFFE?style=flat-square) | `/api/postagens/destaques` | Consulta postagens em destaque. |
+| ![GET](https://img.shields.io/badge/GET-61AFFE?style=flat-square) | `/api/postagens/detalhe` | Consulta uma postagem pública pelo ID. |
+| ![POST](https://img.shields.io/badge/POST-49CC90?style=flat-square) | `/api/auth/login` | Inicia a sessão do administrador. |
+| ![GET](https://img.shields.io/badge/GET-61AFFE?style=flat-square) | `/api/auth/me` | Consulta a sessão atual. |
+| ![POST](https://img.shields.io/badge/POST-49CC90?style=flat-square) | `/api/auth/logout` | Encerra a sessão do administrador. |
+| ![GET](https://img.shields.io/badge/GET-61AFFE?style=flat-square) | `/api/admin/postagens` | Lista postagens para administração. |
+| ![GET](https://img.shields.io/badge/GET-61AFFE?style=flat-square) | `/api/admin/postagens/selecionada` | Consulta uma postagem pelo ID para edição. |
+| ![POST](https://img.shields.io/badge/POST-49CC90?style=flat-square) | `/api/admin/postagens` | Cadastra uma postagem. |
+| ![PUT](https://img.shields.io/badge/PUT-FCA130?style=flat-square) | `/api/admin/postagens` | Atualiza uma postagem existente. |
+| ![DELETE](https://img.shields.io/badge/DELETE-F93E3E?style=flat-square) | `/api/admin/postagens` | Exclui uma postagem. |
+
 
 | Método | Endpoint | Para que serve |
 | --- | --- | --- |
