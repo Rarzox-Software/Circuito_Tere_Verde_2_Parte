@@ -24,7 +24,6 @@ Construir a parte responsável por manter os conteúdos do Circuito Terê Verde 
 
 Os endpoints são os caminhos usados para acessar os recursos da API. Os endpoints administrativos exigem uma sessão de administrador.
 
-
 | Método | Endpoint | Para que serve |
 | :---: | --- | --- |
 | ![GET](https://img.shields.io/badge/GET-61AFFE?style=flat-square) | `/api/parques` | Consulta os parques disponíveis. |
@@ -40,23 +39,6 @@ Os endpoints são os caminhos usados para acessar os recursos da API. Os endpoin
 | ![POST](https://img.shields.io/badge/POST-49CC90?style=flat-square) | `/api/admin/postagens` | Cadastra uma postagem. |
 | ![PUT](https://img.shields.io/badge/PUT-FCA130?style=flat-square) | `/api/admin/postagens` | Atualiza uma postagem existente. |
 | ![DELETE](https://img.shields.io/badge/DELETE-F93E3E?style=flat-square) | `/api/admin/postagens` | Exclui uma postagem. |
-
-
-| Método | Endpoint | Para que serve |
-| --- | --- | --- |
-| GET | `/api/parques` | Consulta os parques disponíveis. |
-| GET | `/api/tipos-postagem` | Consulta as categorias de conteúdo. |
-| GET | `/api/postagens` | Lista postagens públicas; aceita filtros e paginação. |
-| GET | `/api/postagens/destaques` | Consulta postagens em destaque. |
-| GET | `/api/postagens/detalhe` | Consulta uma postagem pública pelo ID. |
-| POST | `/api/auth/login` | Inicia a sessão do administrador. |
-| GET | `/api/auth/me` | Consulta a sessão atual. |
-| POST | `/api/auth/logout` | Encerra a sessão do administrador. |
-| GET | `/api/admin/postagens` | Lista postagens para administração. |
-| GET | `/api/admin/postagens/selecionada` | Consulta uma postagem pelo ID para edição. |
-| POST | `/api/admin/postagens` | Cadastra uma postagem. |
-| PUT | `/api/admin/postagens` | Atualiza uma postagem existente. |
-| DELETE | `/api/admin/postagens` | Exclui uma postagem. |
 
 Os filtros e a paginação da listagem, assim como os IDs usados nas consultas e alterações, são enviados nos cabeçalhos da requisição. O cadastro de uma postagem recebe os dados e a imagem; a imagem deve ser JPG, PNG ou WEBP e ter até 5 MB.
 
