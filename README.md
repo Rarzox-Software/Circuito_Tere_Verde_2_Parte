@@ -70,7 +70,7 @@ docker network create circuito-tereverde
 Execute a API:
 
 ```powershell
-docker run -d --name circuito-tereverde-api --network circuito-tereverde -p 8080:8080 -v circuito-tereverde-dados:/data -e ASPNETCORE_ENVIRONMENT=Development rarzox/circuitotereverdewebapi:beta-teste
+docker run -d --name circuito-tereverde-api --network circuito-tereverde -p 8080:8080 -v circuito-tereverde-dados:/data -e ASPNETCORE_ENVIRONMENT=Development rarzox/circuitotereverdewebapi:mvp-apresentacao
 ```
 
 A API e o Swagger estarão disponíveis em:
@@ -84,7 +84,7 @@ http://localhost:8080/swagger
 Depois, execute o site:
 
 ```powershell
-docker run -d --name circuito-tereverde-web --network circuito-tereverde -p 8081:80 rarzox/circuitotereverdeweb:beta-teste
+docker run -d --name circuito-tereverde-web --network circuito-tereverde -p 8081:80 rarzox/circuitotereverdeweb:mvp-apresentacao
 ```
 
 O site estará disponível em:
